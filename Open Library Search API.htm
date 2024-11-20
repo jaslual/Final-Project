@@ -1,0 +1,2251 @@
+<!DOCTYPE html>
+<!-- saved from url=(0043)https://openlibrary.org/dev/docs/api/search -->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="title" content="">
+    <meta name="keywords" content="free books, books to read, free ebooks, audio books, read books for free, read books online, online library">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="OpenLibrary.org">
+    <meta name="creator" content="OpenLibrary.org">
+    <meta name="copyright" content="Original content copyright; 2007-2015">
+    <meta name="distribution" content="Global">
+    <meta name="theme-color" content="#e2dcc5">
+
+
+    <link rel="canonical" href="https://openlibrary.org/dev/docs/api/search">
+    <link rel="preconnect" href="https://athena.archive.org/">
+
+    <link rel="search" type="application/opensearchdescription+xml" title="Open Library" href="https://openlibrary.org/static/opensearch.xml">
+    <link rel="manifest" href="https://openlibrary.org/static/manifest.json">
+
+    <link href="https://openlibrary.org/static/images/openlibrary-128x128.png" rel="apple-touch-icon">
+    <link href="https://openlibrary.org/static/images/openlibrary-152x152.png" rel="apple-touch-icon" sizes="152x152">
+    <link href="https://openlibrary.org/static/images/openlibrary-167x167.png" rel="apple-touch-icon" sizes="167x167">
+    <link href="https://openlibrary.org/static/images/openlibrary-180x180.png" rel="apple-touch-icon" sizes="180x180">
+    <link href="https://openlibrary.org/static/images/openlibrary-192x192.png" rel="icon" sizes="192x192">
+    <link href="https://openlibrary.org/static/images/openlibrary-128x128.png" rel="icon" sizes="128x128">
+    <link href="./Open Library Search API_files/page-user.css" rel="stylesheet" type="text/css">
+
+    <noscript>
+      <style>
+        /* Don't hide content with clamp if no js to show more/less */
+        .clamp {
+          -webkit-line-clamp: unset !important;
+        }
+
+        /* Don't show read-more sections collapsed */
+        .read-more__content {
+          max-height: unset !important;
+        }
+        /* Don't show read-more toggle buttons */
+        .read-more__toggle {
+          display: none !important;
+        }
+
+        /* @width-breakpoint-tablet media query: */
+        @media only screen and (min-width: 768px) {
+          /* Sticky navbar to top of screen if compact title cannot be stickied */
+          .work-menu {
+            top: 0 !important;
+          }
+        }
+      </style>
+    </noscript>
+ <script>
+
+/* @licstart  The following is the entire license notice for the
+ * JavaScript code in this page.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * @licend  The above is the entire license notice
+ * for the JavaScript code in this page.
+ */
+
+  </script>
+    <meta name="google-site-verification" content="KrqcZD4l5BLNVyjzSi2sjZBiwgmkJ1W7n6w7ThD7A74">
+    <meta name="google-site-verification" content="vtXGm8q3UgP-f6qXTvQBo85uh3nmIYIotVqqdJDpyz4">
+    <!-- Drini, Google Search Console -->
+    <meta name="google-site-verification" content="XYOJ9Uj0MBr6wk7kj1IkttXrqY-bbRstFMADTfEt354">
+    <!-- Drini, Bing Webmaster Tools -->
+    <meta name="msvalidate.01" content="8BEBECBEF537077737975A49D55B857D">
+
+
+
+
+
+
+
+    <meta name="description" content="Open Library is an open, editable library catalog, building towards a web page for every book ever published. Read, borrow, and discover more than 3M books for free.">
+    
+    <title>Open Library Search API | Open Library</title>
+
+<style>/**
+ * Styles here will load for all users, but only if JavaScript is enabled.
+ * At time of writing, this stylesheet is not render blocking.
+ */
+/**
+ * DO NOT ADD NEW CSS here
+ * Unless... you are removing an inline style and moving it into here.
+ *
+ * We are currently in the process of:
+ * - moving styles from this file into the components
+ * - removing dead code
+ * - removing redundant CSS in favor of common reusable styles
+ *
+ * DO NOT ADD NEW CSS HERE
+ */
+.ui-widget-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: hsl(0, 0%, 0%);
+  opacity: 0.5;
+  filter: alpha(opacity=50);
+  z-index: 9999 !important;
+}
+.ui-sortable-placeholder {
+  border: 1px dotted hsl(0, 0%, 60%);
+  visibility: visible !important;
+  filter: brightness(0.85);
+  border-radius: 6px;
+}
+.ui-sortable-placeholder *,
+.ui-sortable-placeholder:before,
+.ui-sortable-placeholder:after {
+  visibility: hidden;
+}
+.ui-sortable--covers {
+  max-height: 270px;
+  overflow: auto;
+}
+/**
+ * HeaderBar (JS)
+ * https://github.com/internetarchive/openlibrary/wiki/Design-Pattern-Library#headerbar
+ * This stylesheet will only apply if JS is present on the page.
+ */
+.search-facet select {
+  padding: 10px;
+  top: 2px;
+  left: 2px;
+}
+/* COLORBOX POP-UP */
+#colorbox,
+#cboxOverlay,
+#cboxWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 999999;
+}
+#colorbox {
+  outline: none;
+  box-sizing: content-box;
+}
+#colorbox > * {
+  box-sizing: content-box;
+}
+#colorbox img {
+  height: auto;
+}
+#colorbox img,
+#colorbox iframe {
+  width: 100%;
+}
+#colorbox img.cover {
+  border-radius: 5px;
+  box-shadow: 1px 1px 2px 0 hsl(48, 35%, 64%);
+}
+#cboxOverlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+  filter: alpha(opacity=50);
+  background-color: hsl(0, 0%, 0%);
+}
+#cboxMiddleLeft,
+#cboxBottomLeft {
+  clear: left;
+}
+#cboxTitle {
+  margin: 0;
+  display: none !important;
+}
+#cboxLoadingOverlay,
+#cboxLoadingGraphic {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  width: 100%;
+}
+#cboxPrevious,
+#cboxNext,
+#cboxClose,
+#cboxSlideshow {
+  cursor: pointer;
+}
+#cboxContent {
+  box-sizing: content-box;
+  position: relative;
+  background: hsl(0, 0%, 100%);
+  padding: 10px;
+  border: 1px solid hsl(64, 9%, 71%);
+  border-radius: 12px;
+  -webkit-box-shadow: 1px 3px 5px hsl(0, 0%, 27%);
+  box-shadow: 1px 3px 5px hsl(0, 0%, 27%);
+}
+#cboxLoadedContent {
+  background: hsl(0, 0%, 100%);
+  margin: 0;
+  overflow: visible !important;
+}
+#cboxLoadedContent iframe {
+  display: block;
+  border: 0;
+}
+#cboxLoadingOverlay {
+  background: transparent;
+}
+#cboxClose {
+  display: none !important;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 32px;
+  height: 32px;
+  background-image: url(/images/icons/icon_close-pop.png);
+  background-position: 0 0;
+  background-repeat: no-repeat;
+}
+#cboxClose:hover {
+  background-position: 0 -32px;
+}
+.dialog--close {
+  color: hsl(0, 0%, 20%);
+  font-size: 1.2em;
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+  padding: 11px 17px;
+  margin: -11px -17px;
+}
+.dialog--close:visited,
+.dialog--close:link,
+.dialog--close:hover {
+  text-decoration: none;
+}
+/* VIEW LARGER COVER POP-UP */
+div.coverFloat {
+  font-family: "Lucida Grande", Verdana, Geneva, Helvetica, Arial, sans-serif;
+  background: hsl(0, 0%, 100%);
+  text-align: left;
+}
+div.coverFloat a.dialog--close:hover {
+  background-position: 0 -16px;
+}
+div.coverFloatHead {
+  display: flex;
+}
+div.coverFloatHead h2 {
+  font-weight: normal;
+  color: hsl(0, 0%, 20%);
+  font-size: 1em;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+}
+/* ADD IMAGE/COVER POP-UP */
+div.floater {
+  position: relative;
+  font-family: "Lucida Grande", Verdana, Geneva, Helvetica, Arial, sans-serif;
+  min-height: 675px;
+  background: hsl(0, 0%, 100%);
+  text-align: left;
+}
+div.floaterHead {
+  display: flex;
+  padding: 10px 5px;
+}
+div.floaterHead h2 {
+  font-weight: normal;
+  text-align: center;
+  color: hsl(0, 0%, 20%);
+  font-size: 1.25em;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+}
+div.floaterHead.right-justify {
+  justify-content: right;
+}
+div.floaterBody {
+  padding: 20px;
+  font-size: 14px;
+}
+div.floaterBody p {
+  margin-bottom: 14px;
+}
+.floatform,
+.ol-cover-form {
+  font-family: "Lucida Grande", Verdana, Geneva, Helvetica, sans-serif;
+}
+.floatform button[type=submit],
+.ol-cover-form button[type=submit] {
+  font-size: 1em;
+  width: auto;
+  cursor: pointer;
+  display: inline-block;
+}
+.floatform .label,
+.ol-cover-form .label {
+  padding-bottom: 5px;
+}
+.floatform .label label,
+.ol-cover-form .label label {
+  font-size: 1em;
+  font-family: "Lucida Grande", "Trebuchet MS", Geneva, Helvetica, Arial, sans-serif;
+  font-weight: 700;
+}
+.floatform .label span,
+.ol-cover-form .label span {
+  font-weight: normal;
+}
+.floatform input[type=text],
+.ol-cover-form input[type=text],
+.floatform input[type=url],
+.ol-cover-form input[type=url],
+.floatform input[type=file],
+.ol-cover-form input[type=file] {
+  font-size: 1.125em;
+  font-family: "Lucida Grande", Verdana, Geneva, Helvetica, Arial, sans-serif;
+  padding: 3px;
+}
+.floatform input::file-selector-button,
+.ol-cover-form input::file-selector-button {
+  cursor: pointer;
+}
+.floatform a,
+.ol-cover-form a {
+  cursor: pointer;
+}
+.ol-cover-form {
+  background-color: hsl(0, 0%, 93%);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.ol-cover-form .input {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.ol-cover-form .input > :first-child {
+  flex: 1;
+}
+.ol-cover-form button[type=submit] {
+  margin-top: 0;
+}
+.ol-cover-form .carousel-container {
+  padding: 10px 0;
+  margin: 0;
+  border-radius: 10px;
+}
+.ol-cover-form .carousel {
+  padding: 0;
+}
+.ol-cover-form .carousel__item {
+  margin: 0;
+}
+.ol-cover-form .book-cover {
+  height: auto;
+  flex-direction: column;
+  gap: 10px;
+}
+.ol-cover-form .carousel button {
+  color: hsl(0, 0%, 40%);
+  border: 2px solid hsl(0, 0%, 80%);
+  border-radius: 6px;
+  position: relative;
+}
+.ol-cover-form--ia a {
+  text-decoration: none;
+}
+.ol-cover-form--ia .ol-cover-form--ia_image {
+  display: block;
+}
+.ol-cover-form--ia .input {
+  flex-direction: column;
+  align-items: flex-start;
+}
+.ol-cover-form--ia button[type=submit] {
+  width: 135px;
+}
+#coverFile {
+  min-width: 1px;
+}
+.dialog--close-parent {
+  cursor: pointer;
+}
+div#covers.input {
+  max-height: 132px;
+  overflow: hidden;
+  margin-left: -80px;
+  text-align: center;
+}
+.floatform__body {
+  width: 100%;
+  position: relative;
+}
+.floatform__body .carousel-section {
+  padding: 0 20px;
+}
+div.imageIntro {
+  margin: 0 0 10px;
+}
+/* ADD ROLES, ETC. */
+div.floaterAdd {
+  position: relative;
+  font-family: "Lucida Grande", Verdana, Geneva, Helvetica, Arial, sans-serif;
+  background: hsl(0, 0%, 100%);
+  text-align: left;
+}
+div.floaterAdd .formElement {
+  margin: 0 20px;
+}
+div.floaterAdd form.floatform .input {
+  padding-top: 5px;
+}
+div.floaterAdd form.floatform .label {
+  padding-top: 20px;
+}
+div.floaterAdd form.floatform .label label {
+  font-size: 1em;
+  font-family: "Lucida Grande", "Trebuchet MS", Geneva, Helvetica, Arial, sans-serif;
+  font-weight: 700;
+}
+div.floaterAdd form.floatform input[type=text],
+div.floaterAdd form.floatform textarea {
+  margin-left: 0;
+}
+div.floaterAdd form.floatform textarea {
+  padding: 3px;
+  resize: none;
+}
+@media only screen and (min-width: 768px) {
+  .floatform div#covers.input,
+  .floatform .label,
+  .floatform .input {
+    width: 560px;
+    padding-top: 20px;
+  }
+  .floatform > div {
+    margin: 0 80px;
+    text-align: left;
+  }
+  .floatform input[type=text],
+  .floatform input[type=url],
+  .floatform input[type=file] {
+    width: 350px;
+  }
+  div.imageIntro {
+    margin: 10px;
+  }
+  .floatform__body > div {
+    margin: 0 80px;
+  }
+  div.floaterAdd .input,
+  div.floaterAdd .label,
+  div.floaterAdd input[type=text],
+  div.floaterAdd input[type=url],
+  div.floaterAdd textarea {
+    width: 560px;
+    resize: none;
+  }
+}
+.native-dialog {
+  padding: 10px;
+  border: 1px solid hsl(64, 9%, 71%);
+  border-radius: 12px;
+  -webkit-box-shadow: 1px 3px 5px hsl(0, 0%, 27%);
+  box-shadow: 1px 3px 5px hsl(0, 0%, 27%);
+}
+.native-dialog--close {
+  color: hsl(0, 0%, 20%);
+  font-size: 1.2em;
+}
+.native-dialog--close:visited,
+.native-dialog--close:link,
+.native-dialog--close:hover {
+  text-decoration: none;
+}
+.native-dialog::backdrop {
+  opacity: 0.5;
+  background-color: hsl(0, 0%, 0%);
+}
+/**
+ * FlashMessage
+ * https://github.com/internetarchive/openlibrary/wiki/Design-Pattern-Library#flashmessage
+ */
+.flash-messages {
+  font-size: 1em;
+  font-family: "Lucida Grande", Verdana, Geneva, Helvetica, Arial, sans-serif;
+  clear: both;
+}
+.flash-messages span {
+  display: block;
+  background-color: hsl(58, 100%, 90%);
+  background-position: 10px 50%;
+  background-repeat: no-repeat;
+  padding: 15px 52px;
+  text-align: left;
+  background-image: url(/images/icons/icon_check.png);
+}
+.flash-messages .error span {
+  background-image: url(/images/icons/icon_alert.png);
+}
+.flash-messages .bookadded span {
+  background: hsl(58, 100%, 90%) url(/images/icons/icon_check.png) no-repeat 40px 40px;
+  padding: 40px 40px 40px 80px;
+  font-family: "Georgia", "Times New Roman", serif;
+  position: relative;
+}
+.flash-messages .bookadded span span {
+  display: inline;
+  padding: 0;
+  font-family: "Lucida Grande", Verdana, Geneva, Helvetica, sans-serif;
+}
+.flash-messages .bookadded h3 {
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 1.5em;
+  font-weight: normal;
+  margin: 0;
+  color: hsl(0, 0%, 0%);
+}
+.flash-messages .bookadded .brown {
+  font-size: 1.125em;
+  margin: 15px 0 30px;
+}
+.flash-messages .bookadded .list {
+  font-size: 1.5em;
+  margin: 0;
+}
+.flash-messages .bookadded h3 em {
+  font-style: italic;
+  font-weight: 700;
+  color: hsl(113, 38%, 29%);
+}
+.flash-messages .bookadded .red {
+  font-family: "Georgia", "Times New Roman", serif;
+}
+.flash-messages .bookadded .close {
+  position: absolute;
+  display: block;
+  top: 20px;
+  right: 20px;
+  width: 16px;
+  height: 16px;
+}
+/* stylelint-disable no-descending-specificity */
+.ac_results {
+  padding: 0;
+  margin: 0;
+  overflow: auto;
+  z-index: 99999;
+  position: absolute;
+  display: none;
+  top: -5px;
+  max-height: 290px;
+  max-width: 600px;
+  background-color: hsl(0, 0%, 100%);
+  border: 1px solid hsl(0, 0%, 80%);
+  opacity: 0.95;
+  text-align: left;
+  list-style: none;
+}
+.ac_results li {
+  margin: 0;
+  padding: 5px;
+  display: block;
+  font-family: "Lucida Grande", Verdana, Geneva, Helvetica, sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  color: hsl(0, 0%, 20%);
+  /*
+    it is very important, if line-height not set or set
+    in relative units scroll will be broken in firefox
+    */
+  line-height: 16px;
+  overflow: hidden;
+  border-bottom: 1px solid hsl(0, 0%, 80%);
+}
+.ac_results li:last-child {
+  border-bottom: 0;
+}
+.ac_results li.ac_over {
+  background-color: hsl(58, 100%, 90%);
+}
+.ac_results .ac_language {
+  font-size: 16px;
+  color: hsl(0, 0%, 0%);
+}
+.ac_author .action {
+  font-size: 9px;
+  color: hsl(81, 39%, 35%);
+}
+.ac_author .books {
+  font-size: 12px;
+  color: hsl(113, 38%, 29%);
+  font-weight: 700;
+  padding: 0;
+}
+.ac_author .subject {
+  font-size: 11px;
+}
+.ac_author .olid {
+  font-family: monospace;
+}
+.ac_author .name {
+  font-size: 16px;
+  display: block;
+  color: hsl(0, 0%, 0%);
+}
+.ac_author .work {
+  font-size: 11px;
+}
+.ac_author .work i {
+  color: hsl(40, 32%, 29%);
+}
+.ac_work .cover {
+  float: left;
+  margin-right: 5px;
+  width: 5em;
+  height: 5em;
+  overflow: hidden;
+  border-radius: 2px;
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0), #000000 15%);
+}
+.ac_work .cover img {
+  width: 100%;
+}
+.ac_work .edition_count {
+  font-size: 12px;
+  color: hsl(113, 38%, 29%);
+  font-weight: 700;
+  padding: 0;
+}
+.ac_work .olid {
+  font-family: monospace;
+}
+.ac_work .name {
+  display: block;
+  line-height: 1.1em;
+}
+.ac_work .title {
+  font-size: 16px;
+  color: hsl(0, 0%, 0%);
+}
+.ac_work .first_publish_year {
+  font-size: 12px;
+}
+.ac_loading {
+  background: hsl(0, 0%, 100%) url(/images/indicator.gif) right center no-repeat;
+}
+.ac_odd {
+  background-color: hsl(0, 0%, 93%);
+}
+.ac_even,
+.ac_odd {
+  background-color: inherit;
+}
+/**
+ * ReadStatuses
+ * https://github.com/internetarchive/openlibrary/wiki/Design-Pattern-Library#readstatuses
+ */
+.read-statuses {
+  border-bottom: 1px solid hsl(0, 0%, 93%);
+  /* stylelint-disable selector-max-specificity */
+  /* stylelint-enable selector-max-specificity */
+}
+.read-statuses button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: hsl(0, 0%, 20%);
+  font-weight: bold;
+  width: 100%;
+  text-align: left;
+  font-size: 0.8em;
+  padding: 10px;
+  border-bottom: 1px solid hsl(0, 0%, 93%);
+}
+.read-statuses button.remove-from-list {
+  color: hsl(8, 78%, 49%);
+  /* stylelint-disable selector-max-specificity */
+  /* stylelint-disable max-nesting-depth */
+  /* stylelint-enable max-nesting-depth */
+  /* stylelint-enable selector-max-specificity */
+}
+.read-statuses button.remove-from-list:hover {
+  color: hsl(8, 78%, 49%);
+}
+.read-statuses button:hover {
+  color: hsl(0, 0%, 0%);
+  background-color: hsl(0, 0%, 100%);
+}
+.read-statuses form:last-child button.nostyle-btn {
+  border: none;
+}
+/**
+ * ManageCoversBtn
+ * https://github.com/internetarchive/openlibrary/wiki/Design-Pattern-Library#manage-covers
+ */
+.manageCovers {
+  max-width: 140px;
+  margin: 0 auto;
+  padding: 8px;
+  border-radius: 3px;
+  border: 3px solid hsl(0, 0%, 20%);
+  background-color: hsl(0, 0%, 100%);
+  color: hsl(0, 0%, 20%);
+  font-size: 12px;
+  cursor: pointer;
+}
+.manageCovers a {
+  color: hsl(0, 0%, 20%);
+}
+.manageCoversContainer {
+  width: 100%;
+  z-index: 99999;
+  position: absolute;
+  bottom: 15px;
+}
+.manageCoversContainer a {
+  display: block;
+  text-decoration: none;
+  opacity: 0;
+}
+.manageCoversContainer a:hover,
+.manageCoversContainer a:focus {
+  text-decoration: underline;
+}
+div:hover > .manageCoversContainer a {
+  opacity: 0.9;
+}
+/**
+ * Throbber
+ * https://github.com/internetarchive/openlibrary/wiki/Design-Pattern-Library#throbber
+ * Used in openlibrary/templates/covers/change.html
+ */
+.throbber {
+  position: absolute;
+  width: 220px;
+  height: 19px;
+  top: 120px;
+  left: 0;
+  text-align: center;
+  background-color: transparent;
+  background-image: url(/images/ajax-loader-bar.gif);
+  background-repeat: no-repeat;
+}
+.throbber h3 {
+  margin-top: 35px;
+}
+@media only screen and (min-width: 768px) {
+  .throbber {
+    top: 280px;
+    left: 210px;
+  }
+}
+/**
+ * CtaBtn
+ * https://github.com/internetarchive/openlibrary/wiki/Design-Pattern-Library#ctabtn
+ * This stylesheet will only apply if JS is present on the page.
+ */
+.cta-btn--available--load,
+a.cta-btn--available--load {
+  background: url(/static/images/indicator.gif) center center no-repeat;
+  background-color: hsl(202, 96%, 37%) !important;
+  opacity: 0.6;
+}
+.cta-btn--unavailable--load,
+a.cta-btn--unavailable--load {
+  background: url(/static/images/indicator.gif) center center no-repeat;
+  background-color: hsl(202, 96%, 37%) !important;
+  opacity: 0.6;
+}
+/**
+ * TabPanel
+ * https://github.com/internetarchive/openlibrary/wiki/Design-Pattern-Library#tabspanel
+ */
+.ui-tabs-nav,
+.ui-tabs-panel {
+  font-family: "Lucida Grande", Verdana, Geneva, Helvetica, Arial, sans-serif;
+}
+.ui-tabs-nav {
+  list-style: none !important;
+  margin: 0 0 18px !important;
+  clear: right;
+  /* stylelint-disable selector-max-specificity */
+  /* stylelint-disable no-descending-specificity */
+  /* stylelint-enable no-descending-specificity */
+  /* stylelint-enable selector-max-specificity */
+}
+.ui-tabs-nav:after {
+  /* clearing without presentational markup, IE gets extra treatment */
+  display: block;
+  clear: both;
+  content: " ";
+}
+.ui-tabs-nav li {
+  list-style: none !important;
+  margin: 0 0 0 1px;
+  min-width: 54px;
+  /* be nice to Opera */
+}
+.ui-tabs-nav a {
+  display: block;
+  font-weight: 600;
+  font-size: 0.6875em;
+  background: hsl(0, 0%, 100%);
+  border-bottom: 3px solid hsl(0, 0%, 93%);
+  padding: 4px 8px 3px;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+  /* required in IE 6 */
+  outline: 0;
+  /* prevent dotted border in Firefox */
+  /* stylelint-disable max-nesting-depth */
+  /* stylelint-enable max-nesting-depth */
+}
+.ui-tabs-nav a:link,
+.ui-tabs-nav a:visited {
+  color: hsl(202, 96%, 28%);
+}
+.ui-tabs-nav a:hover {
+  color: hsl(202, 96%, 28%);
+  text-decoration: underline;
+}
+.ui-tabs-nav .ui-tabs-active {
+  /* stylelint-disable max-nesting-depth */
+  /* stylelint-enable max-nesting-depth */
+}
+.ui-tabs-nav .ui-tabs-active a:link,
+.ui-tabs-nav .ui-tabs-active a:visited {
+  /* @ Opera, use pseudo classes otherwise it confuses cursor... */
+  background: hsl(0, 0%, 93%);
+  border: 1px solid hsl(0, 0%, 93%);
+  border-bottom: 3px solid hsl(0, 0%, 93%);
+  color: hsl(184, 100%, 21%);
+  cursor: default;
+}
+.ui-tabs-nav a:hover,
+.ui-tabs-nav a:focus,
+.ui-tabs-nav a:active,
+.ui-tabs-nav .ui-tabs-deselectable a:hover,
+.ui-tabs-nav .ui-tabs-deselectable a:focus,
+.ui-tabs-nav .ui-tabs-deselectable a:active {
+  /* @ Opera, we need to be explicit again here now... */
+  cursor: pointer;
+}
+.ui-tabs-disabled {
+  opacity: 0.4;
+  filter: alpha(opacity=40);
+}
+.ui-tabs-panel {
+  border: 3px solid hsl(0, 0%, 93%);
+  background: hsl(0, 0%, 100%);
+  /* declare background color for container to avoid distorted fonts in IE while fading */
+}
+.ui-tabs-loading em {
+  padding: 0 0 0 20px;
+}
+.floater .ui-tabs-panel {
+  border: none;
+  background: hsl(0, 0%, 100%);
+  /* declare background color for container to avoid distorted fonts in IE while fading */
+}
+/* Additional IE specific bug fixes... */
+* html .ui-tabs-nav {
+  /* auto clear, @ IE 6 & IE 7 Quirks Mode */
+  display: inline-block;
+}
+*:first-child + html .ui-tabs-nav {
+  /* @ IE 7 Standards Mode - do not group selectors,
+  otherwise IE 6 will ignore complete rule (because of the unknown + combinator)... */
+  display: inline-block;
+}
+@media only screen and (min-width: 768px) {
+  .floater .ui-tabs-panel {
+    border-top: 3px solid hsl(0, 0%, 93%);
+    padding: 15px 30px !important;
+    /* declare background color for container to avoid distorted fonts in IE while fading */
+  }
+  .tabs-panel {
+    padding: 15px 30px 20px !important;
+  }
+  .ui-tabs-nav {
+    margin-bottom: -3px !important;
+  }
+  .ui-tabs-nav li {
+    float: left;
+  }
+  .ui-tabs-nav a {
+    margin: 8px 3px 0;
+  }
+  .ui-tabs-nav .ui-tabs-active a {
+    padding: 2px 8px 3px;
+  }
+}
+/* Caution! Ensure accessibility in print and other media types... */
+@media projection, screen, print {
+  /* Use class for showing/hiding tab content,
+  so that visibility can be better controlled in different media types... */
+  .ui-tabs-hide {
+    display: none;
+  }
+}
+/**
+ * UI-Dialog
+ * https://github.com/internetarchive/openlibrary/wiki/Design-Pattern-Library#ui-dialog
+ */
+.ui-dialog {
+  position: relative;
+  width: 400px;
+  padding: 10px;
+  background-color: hsl(0, 0%, 100%);
+  border-radius: 12px;
+  -webkit-box-shadow: 1px 3px 10px hsl(0, 0%, 0%);
+  box-shadow: 1px 3px 10px hsl(0, 0%, 0%);
+  z-index: 10000 !important;
+}
+.ui-dialog .ui-dialog-titlebar {
+  position: relative;
+  font-weight: normal;
+  color: hsl(0, 0%, 20%);
+  font-size: 1em;
+  margin: 0.2em 0;
+  padding: 8px 0;
+  display: flex;
+}
+.ui-dialog .ui-dialog-titlebar-close span {
+  display: contents;
+}
+.ui-dialog .i-dialog-title {
+  flex: 1;
+}
+.ui-dialog .ui-dialog-content {
+  padding: 0.5em 1em;
+  background: none;
+  overflow: auto;
+  zoom: 1;
+}
+.ui-dialog .ui-dialog-content p {
+  min-height: 28px;
+  padding: 6px 33px 0;
+  background: url(/images/icons/icon_alert.png) no-repeat 0 0;
+  margin: 0;
+}
+.ui-dialog .ui-dialog-buttonpane {
+  text-align: center;
+  margin-bottom: 10px;
+}
+.ui-dialog .ui-dialog-buttonpane button {
+  cursor: pointer;
+  width: auto;
+  overflow: visible;
+  font-size: 18px;
+  margin: 0 8px;
+}
+.ui-draggable .ui-dialog-titlebar {
+  display: flex;
+  cursor: move;
+}
+.ui-draggable .ui-dialog-title {
+  flex: 1;
+}
+.ui-draggable .ui-dialog-titlebar-close span {
+  display: contents;
+}
+* html .ui-helper-clearfix {
+  height: 1%;
+}
+/**
+ * Wmd Prompt Dialog
+ * https://github.com/internetarchive/openlibrary/wiki/Design-Pattern-Library#wmdpromptdialog
+ * these dialogs can be seen when wmd-button-bar icon is clicked e.g. add link
+ */
+@media all and (max-width: 768px) {
+  .wmd-prompt-dialog {
+    margin-left: 10px !important;
+    margin-top: 10px !important;
+    top: 100px !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 300px !important;
+  }
+}
+.wmd-prompt-dialog {
+  width: 400px;
+  border: 10px solid hsl(40, 32%, 29%);
+  background-color: hsl(0, 0%, 100%);
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  border-radius: 12px;
+  -moz-box-shadow: 1px 3px 10px hsl(0, 0%, 0%);
+  -webkit-box-shadow: 1px 3px 10px hsl(0, 0%, 0%);
+  box-shadow: 1px 3px 10px hsl(0, 0%, 0%);
+  text-align: left;
+}
+.wmd-prompt-dialog > div {
+  font-size: 14px;
+  font-family: "Lucida Grande", Verdana, Geneva, Helvetica, sans-serif;
+  color: hsl(0, 0%, 27%);
+  padding: 20px !important;
+}
+.wmd-prompt-dialog > div p {
+  margin-bottom: 0 !important;
+  position: relative;
+}
+.wmd-prompt-dialog > form {
+  width: 480px;
+  padding: 20px;
+  padding-top: 0;
+}
+.wmd-prompt-dialog > form > input[type=text] {
+  float: left;
+  margin-left: 20px !important;
+  clear: both;
+  width: 350px;
+  font-size: 1.125em;
+  font-family: "Lucida Grande", Verdana, Geneva, Helvetica, Arial, sans-serif;
+  padding: 3px;
+}
+.wmd-prompt-dialog > form > input[type="button"] {
+  font-size: 1.125em;
+  width: auto !important;
+}
+.wmd-prompt-dialog p b {
+  display: block;
+  position: relative;
+  background-color: hsl(40, 32%, 29%);
+  padding: 0 10px 10px;
+  color: hsl(0, 0%, 100%);
+  font-family: "News Gothic MT", "Arial Rounded MT", Geneva, Helvetica, sans-serif;
+  font-size: 1.75em;
+  top: -20px;
+  left: -21px;
+  width: 282px;
+}
+@media all and (min-width: 768px) {
+  .wmd-prompt-dialog p b {
+    width: 380px;
+  }
+}
+.coverEbook {
+  cursor: pointer;
+  z-index: 1000;
+}
+.coverEbook img {
+  opacity: 0.85;
+  filter: alpha(opacity=85);
+}
+.coverEbook a.cta-btn {
+  position: absolute;
+  padding: 0 5px;
+  right: 0;
+  bottom: 3px;
+  border-radius: 3px;
+}
+.tools a.on,
+.tools a.on:hover,
+.tools a.on:active {
+  color: hsl(0, 0%, 20%);
+  cursor: default;
+  text-decoration: none;
+}
+
+/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3N0YXRpYy9jc3MvanMtYWxsLmxlc3MiLCJ3ZWJwYWNrOi8vLi9zdGF0aWMvY3NzL2xlZ2FjeS1qcXVlcnktdWkubGVzcyIsIndlYnBhY2s6Ly8uL3N0YXRpYy9jc3MvY29tcG9uZW50cy9oZWFkZXItYmFyLS1qcy5sZXNzIiwid2VicGFjazovLy4vc3RhdGljL2Nzcy9jb21wb25lbnRzL2Nib3gubGVzcyIsIndlYnBhY2s6Ly8uL3N0YXRpYy9jc3MvY29tcG9uZW50cy9uYXRpdmUtZGlhbG9nLmxlc3MiLCJ3ZWJwYWNrOi8vLi9zdGF0aWMvY3NzL2NvbXBvbmVudHMvZmxhc2gtbWVzc2FnZXMubGVzcyIsIndlYnBhY2s6Ly8uL3N0YXRpYy9jc3MvY29tcG9uZW50cy9qcXVlcnkuYXV0b2NvbXBsZXRlLmxlc3MiLCJ3ZWJwYWNrOi8vLi9zdGF0aWMvY3NzL2NvbXBvbmVudHMvcmVhZC1zdGF0dXNlcy5sZXNzIiwid2VicGFjazovLy4vc3RhdGljL2Nzcy9jb21wb25lbnRzL21hbmFnZS1jb3ZlcnMubGVzcyIsIndlYnBhY2s6Ly8uL3N0YXRpYy9jc3MvY29tcG9uZW50cy90aHJvYmJlci5sZXNzIiwid2VicGFjazovLy4vc3RhdGljL2Nzcy9jb21wb25lbnRzL2J1dHRvbkN0YS0tanMubGVzcyIsIndlYnBhY2s6Ly8uL3N0YXRpYy9jc3MvY29tcG9uZW50cy91aS10YWJzLmxlc3MiLCJ3ZWJwYWNrOi8vLi9zdGF0aWMvY3NzL2NvbXBvbmVudHMvdWktZGlhbG9nLmxlc3MiLCJ3ZWJwYWNrOi8vLi9zdGF0aWMvY3NzL2NvbXBvbmVudHMvd21kLXByb21wdC1kaWFsb2ctLWpzLmxlc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7OztFQUdFO0FBQ0Y7Ozs7Ozs7Ozs7RUFVRTtBQ0hGO0VBQ0UsZUFBQTtFQUNBLE1BQUE7RUFDQSxPQUFBO0VBQ0EsV0FBQTtFQUNBLFlBQUE7RUFDQSxnQ0FBQTtFQUNBLFlBQUE7RUFDQSx5QkFB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dUJBQUE7RWJ3M0JGO0FBQ0Y7QWFyM0JBO0VBQ0UsWUFBQTtFQUNBLG9DQUFBO0VBQ0Esa0NBQUE7RUFDQSwyQkFBQTtFQUNBLHdCQUFBO0VBQ0EsbUJBQUE7RUFDQSw0Q0FBQTtFQUNBLCtDQUFBO0VBQ0EsdUNBQUE7RUFDQSxnQkFBQTtBYnUzQkY7QWFqNEJBO0VBYUksZUFBQTtFQUNBLG9FQUFBO0VBQ0Esc0JBQUE7RUFDQSx3QkFBQTtBYnUzQko7QWF2NEJBO0VBa0JNLDJCQUFBO0VBQ0Esa0JBQUE7QWJ3M0JOO0FhMzRCQTtFQXVCSSxZQUFBO0VBQ0EsYUFBQTtFQUNBLGNBQUE7QWJ1M0JKO0FhaDVCQTtFQTJCTSxXQUFBO0VBQ0EsNEJBQUE7RUFDQSxXQUFBO0VBQ0EsWUFBQTtFQUNBLGtCQUFBO0VBQ0EsMkVBQUE7RUFDQSxZQUFBO0FidzNCTjtBYXo1QkE7RUFvQ00sa0JBQUE7RUFDQSxzQkFBQTtBYnczQk47QWE3NUJBO0VBeUNJLGNBQUE7RUFDQSxrQkFBQTtFQUNBLG1DQUFBO0VBQ0Esb0JBQUE7RUFDQSx1QkFBQTtFQUNBLGdGQUFBO0VBQ0EsaUJBQUE7RUFDQSxVQUFBO0VBQ0EsV0FBQTtFQUNBLFlBQUE7QWJ1M0JKO0FhbjNCQTtFQUNFO0lBRUksWUFBQTtFYm8zQko7QUFDRjtBQXQ2QkE7RUFDRSxlQUFBO0VBQ0EsYUFBQTtBQXc2QkY7QUExNkJBO0VBSUksYUFBQTtFQUNBLHlCQUFBO0FBeTZCSjtBQTk2QkE7RUFRSSxrQkFBQTtFQUNBLGNBQUE7RUFDQSxRQUFBO0VBQ0EsV0FBQTtFQUNBLGtCQUFBO0FBeTZCSjtBQWw2QkU7OztFQUdFLHNCQUFBO0VBQ0EsZUFBQTtFQUNBLHFCQUFBO0FBbzZCSiIsInNvdXJjZXNDb250ZW50IjpbIi8qKlxuICogU3R5bGVzIGhlcmUgd2lsbCBsb2FkIGZvciBhbGwgdXNlcnMsIGJ1dCBvbmx5IGlmIEphdmFTY3JpcHQgaXMgZW5hYmxlZC5cbiAqIEF0IHRpbWUgb2Ygd3JpdGluZywgdGhpcyBzdHlsZXNoZWV0IGlzIG5vdCByZW5kZXIgYmxvY2tpbmcuXG4gKi9cbkBpbXBvcnQgKGxlc3MpIFwibGVzcy9pbmRleC5sZXNzXCI7XG5cbkBpbXBvcnQgKGxlc3MpIFwibGVnYWN5LWpxdWVyeS11aS5sZXNzXCI7XG5cbkBpbXBvcnQgKGxlc3MpIFwiY29tcG9uZW50cy9oZWFkZXItYmFyLS1qcy5sZXNzXCI7XG5AaW1wb3J0IChsZXNzKSBcImNvbXBvbmVudHMvY2JveC5sZXNzXCI7XG5AaW1wb3J0IChsZXNzKSBcImNvbXBvbmVudHMvbmF0aXZlLWRpYWxvZy5sZXNzXCI7XG5AaW1wb3J0IChsZXNzKSBcImNvbXBvbmVudHMvZmxhc2gtbWVzc2FnZXMubGVzc1wiO1xuQGltcG9ydCAobGVzcykgXCJjb21wb25lbnRzL2pxdWVyeS5hdXRvY29tcGxldGUubGVzc1wiO1xuXG5AaW1wb3J0IChsZXNzKSBcImNvbXBvbmVudHMvcmVhZC1zdGF0dXNlcy5sZXNzXCI7XG5AaW1wb3J0IChsZXNzKSBcImNvbXBvbmVudHMvbWFuYWdlLWNvdmVycy5sZXNzXCI7XG5AaW1wb3J0IChsZXNzKSBcImNvbXBvbmVudHMvdGhyb2JiZXIubGVzc1wiO1xuXG4vLyBMb2FkaW5nIGluZGljYXRvcnNcbkBpbXBvcnQgKGxlc3MpIFwiY29tcG9uZW50cy9idXR0b25DdGEtLWpzLmxlc3NcIjtcblxuLy8gQm9vayBjb3ZlciBvdmVybGF5XG5AaW1wb3J0IChsZXNzKSBcImNvbXBvbmVudHMvdWktdGFicy5sZXNzXCI7XG5cbi8vIFJlbW92ZSBpdGVtcyBmcm9tIGxpc3RcbkBpbXBvcnQgKGxlc3MpIFwiY29tcG9uZW50cy91aS1kaWFsb2cubGVzc1wiO1xuXG5AaW1wb3J0IChsZXNzKSBcImNvbXBvbmVudHMvd21kLXByb21wdC1kaWFsb2ctLWpzLmxlc3NcIjtcblxuLy8gb3BlbmxpYnJhcnkvcGx1Z2lucy9vcGVubGlicmFyeS9qcy9zdWJqZWN0cy5qc1xuLmNvdmVyRWJvb2sge1xuICBjdXJzb3I6IHBvaW50ZXI7XG4gIHotaW5kZXg6IEB6LWluZGV4LWxldmVsLTY7XG4gIGltZyB7XG4gICAgb3BhY2l0eTogLjg1O1xuICAgIGZpbHRlcjogYWxwaGEob3BhY2l0eT04NSk7XG4gIH1cbiAgYS5jdGEtYnRuIHtcbiAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgcGFkZGluZzogMCA1cHg7XG4gICAgcmlnaHQ6IDA7XG4gICAgYm90dG9tOiAzcHg7XG4gICAgYm9yZGVyLXJhZGl1czogM3B4O1xuICB9XG59XG5cbi8vIE5vdCBjbGVhciBpZiB0aGVzZSBhcmUgbmVlZGVkLiBwbGVhc2UgcmV2aWV3LlxuLnRvb2xzIGEge1xuICAvLyBUaGUgb24gY2xhc3MgaXMgYWRkZWQgaW5zaWRlIG9wZW5saWJyYXJ5L3BsdWdpbnMvb3BlbmxpYnJhcnkvanMvb2wuanNcbiAgJi5vbixcbiAgJi5vbjpob3ZlcixcbiAgJi5vbjphY3RpdmUge1xuICAgIGNvbG9yOiBAZGFyay1ncmV5O1xuICAgIGN1cnNvcjogZGVmYXVsdDtcbiAgICB0ZXh0LWRlY29yYXRpb246IG5vbmU7XG4gIH1cbn1cbiIsIi8qKlxuICogRE8gTk9UIEFERCBORVcgQ1NTIGhlcmVcbiAqIFVubGVzcy4uLiB5b3UgYXJlIHJlbW92aW5nIGFuIGlubGluZSBzdHlsZSBhbmQgbW92aW5nIGl0IGludG8gaGVyZS5cbiAqXG4gKiBXZSBhcmUgY3VycmVudGx5IGluIHRoZSBwcm9jZXNzIG9mOlxuICogLSBtb3Zpbmcgc3R5bGVzIGZyb20gdGhpcyBmaWxlIGludG8gdGhlIGNvbXBvbmVudHNcbiAqIC0gcmVtb3ZpbmcgZGVhZCBjb2RlXG4gKiAtIHJlbW92aW5nIHJlZHVuZGFudCBDU1MgaW4gZmF2b3Igb2YgY29tbW9uIHJldXNhYmxlIHN0eWxlc1xuICpcbiAqIERPIE5PVCBBREQgTkVXIENTUyBIRVJFXG4gKi9cbi51aS13aWRnZXQtb3ZlcmxheSB7XG4gIHBvc2l0aW9uOiBmaXhlZDtcbiAgdG9wOiAwO1xuICBsZWZ0OiAwO1xuICB3aWR0aDogMTAwJTtcbiAgaGVpZ2h0OiAxMDAlO1xuICBiYWNrZ3JvdW5kLWNvbG9yOiBAYmxhY2s7XG4gIG9wYWNpdHk6IC41O1xuICBmaWx0ZXI6IGFscGhhKG9wYWNpdHk9NTApO1xuICB6LWluZGV4OiBAei1pbmRleC1sZXZlbC0xMyAhaW1wb3J0YW50O1xufVxuLnVpLXNvcnRhYmxlLXBsYWNlaG9sZGVyIHtcbiAgYm9yZGVyOiAxcHggZG90dGVkIEBtaWQtZ3JleTtcbiAgdmlzaWJpbGl0eTogdmlzaWJsZSAhaW1wb3J0YW50O1xuICBmaWx0ZXI6IGJyaWdodG5lc3MoLjg1KTtcbiAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAqLCAmOmJlZm9yZSwgJjphZnRlciB7XG4gICAgdmlzaWJpbGl0eTogaGlkZGVuO1xuICB9XG59XG4udWktc29ydGFibGUtLWNvdmVycyB7XG4gIG1heC1oZWlnaHQ6IDI3MHB4O1xuICBvdmVyZmxvdzogYXV0bztcbn1cbiIsIi8qKlxuICogSGVhZGVyQmFyIChKUylcbiAqIGh0dHBzOi8vZ2l0aHViLmNvbS9pbnRlcm5ldGFyY2hpdmUvb3BlbmxpYnJhcnkvd2lraS9EZXNpZ24tUGF0dGVybi1MaWJyYXJ5I2hlYWRlcmJhclxuICogVGhpcyBzdHlsZXNoZWV0IHdpbGwgb25seSBhcHBseSBpZiBKUyBpcyBwcmVzZW50IG9uIHRoZSBwYWdlLlxuICovXG5cbi5zZWFyY2gtZmFjZXQge1xuICAvLyBFeHBhbmQgc2VsZWN0IHRvIGJlIGNsaWNrYWJsZVxuICBzZWxlY3Qge1xuICAgIHBhZGRpbmc6IDEwcHg7XG4gICAgdG9wOiAycHg7XG4gICAgbGVmdDogMnB4O1xuICB9XG59XG4iLCIvLyBzdHlsZWxpbnQtZGlzYWJsZSBzZWxlY3Rvci1tYXgtc3BlY2lmaWNpdHlcbkBpbXBvcnQgKGxlc3MpIFwiLi4vbGVzcy9mb250LWZhbWlsaWVzLmxlc3NcIjtcbkBpbXBvcnQgKGxlc3MpIFwiLi4vbGVzcy96LWluZGV4Lmxlc3NcIjtcblxuLyogQ09MT1JCT1ggUE9QLVVQICovXG4jY29sb3Jib3gsXG4jY2JveE92ZXJsYXksXG4jY2JveFdyYXBwZXIge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIHRvcDogMDtcbiAgbGVmdDogMDtcbiAgei1pbmRleDogQHotaW5kZXgtbGV2ZWwtMTc7XG59XG5cbiNjb2xvcmJveCB7XG4gIG91dGxpbmU6IG5vbmU7XG4gIGJveC1zaXppbmc6IGNvbnRlbnQtYm94O1xuICA+ICoge1xuICAgIGJveC1zaXppbmc6IGNvbnRlbnQtYm94O1xuICB9XG5cbiAgLy8gSW4gbGlnaHRib3hlcyBmb3IgZGlzcGxheWluZyBjdXJyZW50IGNvdmVyLCBpbXBvcnRhbnQgdGhlIGltYWdlXG4gIC8vIGlzIG5vdCBsYXJnZXIgdGhhbiBhdmFpbGFibGUgc3BhY2UuXG4gIGltZyB7XG4gICAgaGVpZ2h0OiBhdXRvO1xuICB9XG5cbiAgaW1nLFxuICBpZnJhbWUge1xuICAgIHdpZHRoOiAxMDAlO1xuICB9XG5cbiAgaW1nLmNvdmVyIHtcbiAgICBib3JkZXItcmFkaXVzOiA1cHg7XG4gICAgYm94LXNoYWRvdzogMXB4IDFweCAycHggMCBAYm9vay1jb3Zlci1zaGFkb3ctY29sb3I7XG4gIH1cbn1cblxuI2Nib3gge1xuICAmT3ZlcmxheSB7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHdpZHRoOiAxMDAlO1xuICAgIGhlaWdodDogMTAwJTtcbiAgICBvcGFjaXR5OiAuNTtcbiAgICBmaWx0ZXI6IGFscGhhKG9wYWNpdHk9NTApO1xuICAgIGJhY2tncm91bmQtY29sb3I6IEBibGFjaztcbiAgfVxuICAmTWlkZGxlTGVmdCxcbiAgJkJvdHRvbUxlZnQge1xuICAgIGNsZWFyOiBsZWZ0O1xuICB9XG4gICZUaXRsZSB7XG4gICAgbWFyZ2luOiAwO1xuICAgIGRpc3BsYXk6IG5vbmUgIWltcG9ydGFudDtcbiAgfVxuICAmTG9hZGluZ092ZXJsYXksXG4gICZMb2FkaW5nR3JhcGhpYyB7XG4gICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgIHRvcDogMjVweDtcbiAgICBsZWZ0OiAyNXB4O1xuICAgIHdpZHRoOiAxMDAlO1xuICB9XG4gICZQcmV2aW91cyxcbiAgJk5leHQsXG4gICZDbG9zZSxcbiAgJlNsaWRlc2hvdyB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICB9XG4gICZDb250ZW50IHtcbiAgICBib3gtc2l6aW5nOiBjb250ZW50LWJveDtcbiAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgYmFja2dyb3VuZDogQHdoaXRlO1xuICAgIHBhZGRpbmc6IDEwcHg7XG4gICAgYm9yZGVyOiAxcHggc29saWQgQGRhcmstYmVpZ2U7XG4gICAgYm9yZGVyLXJhZGl1czogMTJweDtcbiAgICAtd2Via2l0LWJveC1zaGFkb3c6IDFweCAzcHggNXB4IEBkYXJrZXItZ3JleTtcbiAgICBib3gtc2hhZG93OiAxcHggM3B4IDVweCBAZGFya2VyLWdyZXk7XG4gIH1cbiAgJkxvYWRlZENvbnRlbnQge1xuICAgIGJhY2tncm91bmQ6IEB3aGl0ZTtcbiAgICBtYXJnaW46IDA7XG4gICAgb3ZlcmZsb3c6IHZpc2libGUgIWltcG9ydGFudDtcbiAgICBpZnJhbWUge1xuICAgICAgZGlzcGxheTogYmxvY2s7XG4gICAgICBib3JkZXI6IDA7XG4gICAgfVxuICB9XG4gICZMb2FkaW5nT3ZlcmxheSB7XG4gICAgYmFja2dyb3VuZDogdHJhbnNwYXJlbnQ7XG4gIH1cbiAgJkNsb3NlIHtcbiAgICBkaXNwbGF5OiBub25lICFpbXBvcnRhbnQ7XG4gICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgIHRvcDogMjBweDtcbiAgICByaWdodDogMjBweDtcbiAgICB3aWR0aDogMzJweDtcbiAgICBoZWlnaHQ6IDMycHg7XG4gICAgYmFja2dyb3VuZC1pbWFnZTogdXJsKC9pbWFnZXMvaWNvbnMvaWNvbl9jbG9zZS1wb3AucG5nKTtcbiAgICBiYWNrZ3JvdW5kLXBvc2l0aW9uOiAwIDA7XG4gICAgYmFja2dyb3VuZC1yZXBlYXQ6IG5vLXJlcGVhdDtcbiAgICAmOmhvdmVyIHtcbiAgICAgIGJhY2tncm91bmQtcG9zaXRpb246IDAgLTMycHg7XG4gICAgfVxuICB9XG59XG5cbi5kaWFsb2ctLWNsb3NlIHtcbiAgY29sb3I6IEBkYXJrLWdyZXk7XG4gIGZvbnQtc2l6ZTogMS4yZW07XG4gIC8vIEluY3JlYXNlIGNsaWNrYWJsZSBhcmUgdG8gdGhlIHJlY29tbWVuZGVkIHNpemUgKDQ0eDQ0cHgpIGFjY29yZGluZyB0b1xuICAvLyBodHRwczovL3d3dy53My5vcmcvV0FJL1dDQUcyMS9VbmRlcnN0YW5kaW5nL3RhcmdldC1zaXplLmh0bWxcbiAgLy8gYnV0IGF2b2lkIG1vZGlmeWluZyB0aGUgVUlcbiAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gIHotaW5kZXg6IEB6LWluZGV4LWxldmVsLTE7XG4gIHBhZGRpbmc6IDExcHggMTdweDtcbiAgbWFyZ2luOiAtMTFweCAtMTdweDtcbiAgJjp2aXNpdGVkLCAmOmxpbmssICY6aG92ZXIge1xuICAgIHRleHQtZGVjb3JhdGlvbjogbm9uZTtcbiAgfVxufVxuXG4vKiBWSUVXIExBUkdFUiBDT1ZFUiBQT1AtVVAgKi9cbmRpdi5jb3ZlckZsb2F0IHtcbiAgZm9udC1mYW1pbHk6IEBsdWNpZGFfc2Fuc19zZXJpZi0xO1xuICBiYWNrZ3JvdW5kOiBAd2hpdGU7XG4gIHRleHQtYWxpZ246IGxlZnQ7XG4gIGEuZGlhbG9nLS1jbG9zZSB7XG4gICAgJjpob3ZlciB7XG4gICAgICBiYWNrZ3JvdW5kLXBvc2l0aW9uOiAwIC0xNnB4O1xuICAgIH1cbiAgfVxuICAmSGVhZCB7XG4gICAgZGlzcGxheTogZmxleDtcbiAgICBoMiB7XG4gICAgICBmb250LXdlaWdodDogbm9ybWFsO1xuICAgICAgY29sb3I6IEBkYXJrLWdyZXk7XG4gICAgICBmb250LXNpemU6IDFlbTtcbiAgICAgIG1hcmdpbjogMDtcbiAgICAgIHBhZGRpbmc6IDA7XG4gICAgICBmbGV4OiAxO1xuICAgIH1cbiAgfVxufVxuXG4vKiBBREQgSU1BR0UvQ09WRVIgUE9QLVVQICovXG5kaXYuZmxvYXRlciB7XG4gIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgZm9udC1mYW1pbHk6IEBsdWNpZGFfc2Fuc19zZXJpZi0xO1xuICBtaW4taGVpZ2h0OiA2NzVweDtcbiAgYmFja2dyb3VuZDogQHdoaXRlO1xuICB0ZXh0LWFsaWduOiBsZWZ0O1xuICAmSGVhZCB7XG4gICAgZGlzcGxheTogZmxleDtcbiAgICBwYWRkaW5nOiAxMHB4IDVweDtcbiAgICBoMiB7XG4gICAgICBmb250LXdlaWdodDogbm9ybWFsO1xuICAgICAgdGV4dC1hbGlnbjogY2VudGVyO1xuICAgICAgY29sb3I6IEBkYXJrLWdyZXk7XG4gICAgICBmb250LXNpemU6IDEuMjVlbTtcbiAgICAgIG1hcmdpbjogMDtcbiAgICAgIHBhZGRpbmc6IDA7XG4gICAgICBmbGV4OiAxO1xuICAgIH1cblxuICAgICYucmlnaHQtanVzdGlmeSB7XG4gICAgICBqdXN0aWZ5LWNvbnRlbnQ6IHJpZ2h0O1xuICAgIH1cbiAgfVxuICAmQm9keSB7XG4gICAgcGFkZGluZzogMjBweDtcbiAgICBmb250LXNpemU6IDE0cHg7XG4gICAgcCB7XG4gICAgICBtYXJnaW4tYm90dG9tOiAxNHB4O1xuICAgIH1cbiAgfVxufVxuXG4uZmxvYXRmb3JtLCAub2wtY292ZXItZm9ybSB7XG4gIGZvbnQtZmFtaWx5OiBAbHVjaWRhX3NhbnNfc2VyaWYtMjtcblxuICBidXR0b25bdHlwZT1zdWJtaXRdIHtcbiAgICBmb250LXNpemU6IDFlbTtcbiAgICB3aWR0aDogYXV0bztcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICB9XG5cbiAgLmxhYmVsIHtcbiAgICBwYWRkaW5nLWJvdHRvbTogNXB4O1xuXG4gICAgbGFiZWwge1xuICAgICAgZm9udC1zaXplOiAxLjBlbTtcbiAgICAgIGZvbnQtZmFtaWx5OiBAbHVjaWRhX3NhbnNfc2VyaWYtNTtcbiAgICAgIGZvbnQtd2VpZ2h0OiA3MDA7XG4gICAgfVxuICAgIHNwYW4ge1xuICAgICAgZm9udC13ZWlnaHQ6IG5vcm1hbDtcbiAgICB9XG4gIH1cblxuICBpbnB1dFt0eXBlPXRleHRdLFxuICBpbnB1dFt0eXBlPXVybF0sXG4gIGlucHV0W3R5cGU9ZmlsZV0ge1xuICAgIGZvbnQtc2l6ZTogMS4xMjVlbTtcbiAgICBmb250LWZhbWlseTogQGx1Y2lkYV9zYW5zX3NlcmlmLTE7XG4gICAgcGFkZGluZzogM3B4O1xuICB9XG5cbiAgaW5wdXQ6OmZpbGUtc2VsZWN0b3ItYnV0dG9ue1xuICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgfVxuXG4gIGEge1xuICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgfVxufVxuXG4ub2wtY292ZXItZm9ybSB7XG4gIGJhY2tncm91bmQtY29sb3I6IEBsaWdodGVzdC1ncmV5O1xuICBib3JkZXItcmFkaXVzOiAxMHB4O1xuICBwYWRkaW5nOiAxMHB4O1xuICBtYXJnaW4tYm90dG9tOiAxMHB4O1xuXG4gIC5pbnB1dCB7XG4gICAgZGlzcGxheTogZmxleDtcbiAgICBnYXA6IDEwcHg7XG4gICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgfVxuXG4gIC5pbnB1dCA+IDpmaXJzdC1jaGlsZCB7XG4gICAgZmxleDogMTtcbiAgfVxuXG4gIGJ1dHRvblt0eXBlPXN1Ym1pdF0ge1xuICAgIG1hcmdpbi10b3A6IDA7XG4gIH1cblxuICAuY2Fyb3VzZWwtY29udGFpbmVyIHtcbiAgICBwYWRkaW5nOiAxMHB4IDA7XG4gICAgbWFyZ2luOiAwO1xuICAgIGJvcmRlci1yYWRpdXM6IDEwcHg7XG4gIH1cblxuICAuY2Fyb3VzZWwge1xuICAgIHBhZGRpbmc6IDA7XG4gIH1cblxuICAuY2Fyb3VzZWxfX2l0ZW0ge1xuICAgIG1hcmdpbjogMDtcbiAgfVxuXG4gIC5ib29rLWNvdmVyIHtcbiAgICBoZWlnaHQ6IGF1dG87XG4gICAgZmxleC1kaXJlY3Rpb246IGNvbHVtbjtcbiAgICBnYXA6IDEwcHg7XG4gIH1cblxuICAuY2Fyb3VzZWwgYnV0dG9uIHtcbiAgICBjb2xvcjogQGdyZXk7XG4gICAgYm9yZGVyOiAycHggc29saWQgQGxpZ2h0LWdyZXk7XG4gICAgYm9yZGVyLXJhZGl1czogNnB4O1xuICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgfVxufVxuXG4ub2wtY292ZXItZm9ybS0taWEge1xuICBhIHtcbiAgICB0ZXh0LWRlY29yYXRpb246IG5vbmU7XG4gIH1cblxuICAub2wtY292ZXItZm9ybS0taWFfaW1hZ2Uge1xuICAgIGRpc3BsYXk6IGJsb2NrO1xuICB9XG5cbiAgLmlucHV0IHtcbiAgICBmbGV4LWRpcmVjdGlvbjogY29sdW1uO1xuICAgIGFsaWduLWl0ZW1zOiBmbGV4LXN0YXJ0O1xuICB9XG5cbiAgYnV0dG9uW3R5cGU9c3VibWl0XSB7XG4gICAgd2lkdGg6IDEzNXB4O1xuICB9XG59XG5cbiNjb3ZlckZpbGUge1xuICBtaW4td2lkdGg6IDFweDtcbn1cblxuLmRpYWxvZy0tY2xvc2UtcGFyZW50IHtcbiAgY3Vyc29yOiBwb2ludGVyO1xufVxuXG5kaXYjY292ZXJzLmlucHV0IHtcbiAgbWF4LWhlaWdodDogMTMycHg7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIG1hcmdpbi1sZWZ0OiAtODBweDtcbiAgdGV4dC1hbGlnbjogY2VudGVyO1xufVxuXG4uZmxvYXRmb3JtX19ib2R5IHtcbiAgd2lkdGg6IDEwMCU7XG4gIHBvc2l0aW9uOiByZWxhdGl2ZTtcblxuICAuY2Fyb3VzZWwtc2VjdGlvbiB7XG4gICAgcGFkZGluZzogMCAyMHB4O1xuICB9XG59XG5cbmRpdi5pbWFnZUludHJve1xuICBtYXJnaW46IDAgMCAxMHB4O1xufVxuXG4vKiBBREQgUk9MRVMsIEVUQy4gKi9cbmRpdi5mbG9hdGVyQWRkIHtcbiAgcG9zaXRpb246IHJlbGF0aXZlO1xuICBmb250LWZhbWlseTogQGx1Y2lkYV9zYW5zX3NlcmlmLTE7XG4gIGJhY2tncm91bmQ6IEB3aGl0ZTtcbiAgdGV4dC1hbGlnbjogbGVmdDtcbiAgLmZvcm1FbGVtZW50IHtcbiAgICBtYXJnaW46IDAgMjBweDtcbiAgfVxuICBmb3JtLmZsb2F0Zm9ybSB7XG4gICAgLmlucHV0IHtcbiAgICAgIHBhZGRpbmctdG9wOiA1cHg7XG4gICAgfVxuICAgIC5sYWJlbCB7XG4gICAgICBwYWRkaW5nLXRvcDogMjBweDtcbiAgICAgIC8vIHN0eWxlbGludC1kaXNhYmxlLW5leHQtbGluZSBtYXgtbmVzdGluZy1kZXB0aFxuICAgICAgbGFiZWwge1xuICAgICAgICBmb250LXNpemU6IDEuMGVtO1xuICAgICAgICBmb250LWZhbWlseTogQGx1Y2lkYV9zYW5zX3NlcmlmLTU7XG4gICAgICAgIGZvbnQtd2VpZ2h0OiA3MDA7XG4gICAgICB9XG4gICAgfVxuICAgIGlucHV0W3R5cGU9dGV4dF0sXG4gICAgdGV4dGFyZWEge1xuICAgICAgbWFyZ2luLWxlZnQ6IDA7XG4gICAgfVxuICAgIHRleHRhcmVhIHtcbiAgICAgIHBhZGRpbmc6IDNweDtcbiAgICAgIHJlc2l6ZTogbm9uZTtcbiAgICB9XG4gIH1cbn1cblxuQG1lZGlhIG9ubHkgc2NyZWVuIGFuZCAobWluLXdpZHRoOiBAd2lkdGgtYnJlYWtwb2ludC10YWJsZXQpIHtcbiAgLmZsb2F0Zm9ybSB7XG4gICAgZGl2I2NvdmVycy5pbnB1dCxcbiAgICAubGFiZWwsXG4gICAgLmlucHV0IHtcbiAgICAgIHdpZHRoOiA1NjBweDtcbiAgICAgIHBhZGRpbmctdG9wOiAyMHB4O1xuICAgIH1cblxuICAgID4gZGl2IHtcbiAgICAgIG1hcmdpbjogMCA4MHB4O1xuICAgICAgdGV4dC1hbGlnbjogbGVmdDtcbiAgICB9XG5cbiAgICBpbnB1dFt0eXBlPXRleHRdLFxuICAgIGlucHV0W3R5cGU9dXJsXSxcbiAgICBpbnB1dFt0eXBlPWZpbGVdIHtcbiAgICAgIHdpZHRoOiAzNTBweDtcbiAgICB9XG4gIH1cblxuICBkaXYuaW1hZ2VJbnRyb3tcbiAgICBtYXJnaW46IDEwcHg7XG4gIH1cblxuICAuZmxvYXRmb3JtX19ib2R5ID4gZGl2IHtcbiAgICBtYXJnaW46IDAgODBweDtcbiAgfVxuICBkaXYuZmxvYXRlckFkZCB7XG4gICAgLmlucHV0LFxuICAgIC5sYWJlbCxcbiAgICBpbnB1dFt0eXBlPXRleHRdLFxuICAgIGlucHV0W3R5cGU9dXJsXSxcbiAgICB0ZXh0YXJlYSB7XG4gICAgICB3aWR0aDogNTYwcHg7XG4gICAgICByZXNpemU6IG5vbmU7XG4gICAgfVxuICB9XG59XG4iLCJAaW1wb3J0IChyZWZlcmVuY2UpIFwiLi4vbGVzcy9jb2xvcnMubGVzc1wiO1xuXG4ubmF0aXZlLWRpYWxvZyB7XG4gIHBhZGRpbmc6IDEwcHg7XG4gIGJvcmRlcjogMXB4IHNvbGlkIEBkYXJrLWJlaWdlO1xuICBib3JkZXItcmFkaXVzOiAxMnB4O1xuICAtd2Via2l0LWJveC1zaGFkb3c6IDFweCAzcHggNXB4IEBkYXJrZXItZ3JleTtcbiAgYm94LXNoYWRvdzogMXB4IDNweCA1cHggQGRhcmtlci1ncmV5O1xuXG4gICYtLWNsb3NlIHtcbiAgICBjb2xvcjogQGRhcmstZ3JleTtcbiAgICBmb250LXNpemU6IDEuMmVtO1xuXG4gICAgJjp2aXNpdGVkLCAmOmxpbmssICY6aG92ZXIge1xuICAgICAgdGV4dC1kZWNvcmF0aW9uOiBub25lO1xuICAgIH1cbiAgfVxufVxuXG4ubmF0aXZlLWRpYWxvZzo6YmFja2Ryb3Age1xuICBvcGFjaXR5OiAuNTtcbiAgYmFja2dyb3VuZC1jb2xvcjogQGJsYWNrO1xufVxuIiwiLyoqXG4gKiBGbGFzaE1lc3NhZ2VcbiAqIGh0dHBzOi8vZ2l0aHViLmNvbS9pbnRlcm5ldGFyY2hpdmUvb3BlbmxpYnJhcnkvd2lraS9EZXNpZ24tUGF0dGVybi1MaWJyYXJ5I2ZsYXNobWVzc2FnZVxuICovXG5AaW1wb3J0IFwiLi4vbGVzcy9pbmRleC5sZXNzXCI7XG5cbi5mbGFzaC1tZXNzYWdlcyB7XG4gIGZvbnQtc2l6ZTogMS4wZW07XG4gIGZvbnQtZmFtaWx5OiBAbHVjaWRhX3NhbnNfc2VyaWYtMTtcbiAgY2xlYXI6IGJvdGg7XG4gIHNwYW4ge1xuICAgIGRpc3BsYXk6IGJsb2NrO1xuICAgIGJhY2tncm91bmQtY29sb3I6IEBsaWdodC15ZWxsb3c7XG4gICAgYmFja2dyb3VuZC1wb3NpdGlvbjogMTBweCA1MCU7XG4gICAgYmFja2dyb3VuZC1yZXBlYXQ6IG5vLXJlcGVhdDtcbiAgICBwYWRkaW5nOiAxNXB4IDUycHg7XG4gICAgdGV4dC1hbGlnbjogbGVmdDtcbiAgICBiYWNrZ3JvdW5kLWltYWdlOiB1cmwoL2ltYWdlcy9pY29ucy9pY29uX2NoZWNrLnBuZyk7XG4gIH1cbiAgLmVycm9yIHNwYW4ge1xuICAgIGJhY2tncm91bmQtaW1hZ2U6IHVybCgvaW1hZ2VzL2ljb25zL2ljb25fYWxlcnQucG5nKTtcbiAgfVxuICAuYm9va2FkZGVkIHtcbiAgICBzcGFuIHtcbiAgICAgIGJhY2tncm91bmQ6IEBsaWdodC15ZWxsb3cgdXJsKC9pbWFnZXMvaWNvbnMvaWNvbl9jaGVjay5wbmcpIG5vLXJlcGVhdCA0MHB4IDQwcHg7XG4gICAgICBwYWRkaW5nOiA0MHB4IDQwcHggNDBweCA4MHB4O1xuICAgICAgZm9udC1mYW1pbHk6IEBnZW9yZ2lhX3NlcmlmLTI7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgICAvLyBzdHlsZWxpbnQtZGlzYWJsZS1uZXh0LWxpbmUgbWF4LW5lc3RpbmctZGVwdGhcbiAgICAgIHNwYW4ge1xuICAgICAgICBkaXNwbGF5OiBpbmxpbmU7XG4gICAgICAgIHBhZGRpbmc6IDA7XG4gICAgICAgIGZvbnQtZmFtaWx5OiBAbHVjaWRhX3NhbnNfc2VyaWYtMjtcbiAgICAgIH1cbiAgICB9XG4gICAgaDMge1xuICAgICAgZm9udC1mYW1pbHk6IEBnZW9yZ2lhX3NlcmlmLTI7XG4gICAgICBmb250LXNpemU6IDEuNWVtO1xuICAgICAgZm9udC13ZWlnaHQ6IG5vcm1hbDtcbiAgICAgIG1hcmdpbjogMDtcbiAgICAgIGNvbG9yOiBAYmxhY2s7XG4gICAgfVxuICAgIC5icm93biB7XG4gICAgICBmb250LXNpemU6IDEuMTI1ZW07XG4gICAgICBtYXJnaW46IDE1cHggMCAzMHB4O1xuICAgIH1cbiAgICAubGlzdCB7XG4gICAgICBmb250LXNpemU6IDEuNWVtO1xuICAgICAgbWFyZ2luOiAwO1xuICAgIH1cbiAgICBoMyBlbSB7XG4gICAgICBmb250LXN0eWxlOiBpdGFsaWM7XG4gICAgICBmb250LXdlaWdodDogNzAwO1xuICAgICAgY29sb3I6IEBkYXJrLWdyZWVuO1xuICAgIH1cbiAgICAucmVkIHtcbiAgICAgIGZvbnQtZmFtaWx5OiBAZ2VvcmdpYV9zZXJpZi0yO1xuICAgIH1cbiAgICAuY2xvc2Uge1xuICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgZGlzcGxheTogYmxvY2s7XG4gICAgICB0b3A6IDIwcHg7XG4gICAgICByaWdodDogMjBweDtcbiAgICAgIHdpZHRoOiAxNnB4O1xuICAgICAgaGVpZ2h0OiAxNnB4O1xuICAgIH1cbiAgfVxufVxuIiwiQGltcG9ydCAobGVzcykgXCIuLi9sZXNzL3otaW5kZXgubGVzc1wiO1xuXG4vKiBzdHlsZWxpbnQtZGlzYWJsZSBuby1kZXNjZW5kaW5nLXNwZWNpZmljaXR5ICovXG4uYWNfcmVzdWx0cyB7XG4gIHBhZGRpbmc6IDA7XG4gIG1hcmdpbjogMDtcbiAgb3ZlcmZsb3c6IGF1dG87XG4gIHotaW5kZXg6IEB6LWluZGV4LWxldmVsLTE2O1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIGRpc3BsYXk6IG5vbmU7XG4gIHRvcDogLTVweDtcbiAgbWF4LWhlaWdodDogMjkwcHg7XG4gIG1heC13aWR0aDogNjAwcHg7XG4gIGJhY2tncm91bmQtY29sb3I6IEB3aGl0ZTtcbiAgYm9yZGVyOiAxcHggc29saWQgQGxpZ2h0LWdyZXk7XG4gIG9wYWNpdHk6IC45NTtcbiAgdGV4dC1hbGlnbjogbGVmdDtcbiAgbGlzdC1zdHlsZTogbm9uZTtcblxuICBsaSB7XG4gICAgbWFyZ2luOiAwO1xuICAgIHBhZGRpbmc6IDVweDtcbiAgICBkaXNwbGF5OiBibG9jaztcbiAgICBmb250LWZhbWlseTogQGx1Y2lkYV9zYW5zX3NlcmlmLTI7XG4gICAgZm9udC1zaXplOiAxMnB4O1xuICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICBjb2xvcjogQGRhcmstZ3JleTtcbiAgICAvKlxuICAgIGl0IGlzIHZlcnkgaW1wb3J0YW50LCBpZiBsaW5lLWhlaWdodCBub3Qgc2V0IG9yIHNldFxuICAgIGluIHJlbGF0aXZlIHVuaXRzIHNjcm9sbCB3aWxsIGJlIGJyb2tlbiBpbiBmaXJlZm94XG4gICAgKi9cbiAgICBsaW5lLWhlaWdodDogMTZweDtcbiAgICBvdmVyZmxvdzogaGlkZGVuO1xuICAgIGJvcmRlci1ib3R0b206IDFweCBzb2xpZCBAbGlnaHQtZ3JleTtcbiAgICAmOmxhc3QtY2hpbGQge1xuICAgICAgYm9yZGVyLWJvdHRvbTogMDtcbiAgICB9XG5cbiAgICAmLmFjX292ZXIge1xuICAgICAgYmFja2dyb3VuZC1jb2xvcjogQGxpZ2h0LXllbGxvdztcbiAgICB9XG4gIH1cbn1cblxuLmFjX3Jlc3VsdHMgLmFjX2xhbmd1YWdlIHtcbiAgZm9udC1zaXplOiAxNnB4O1xuICBjb2xvcjogQGJsYWNrO1xufVxuXG4uYWNfYXV0aG9yIHtcbiAgLmFjdGlvbiB7XG4gICAgZm9udC1zaXplOiA5cHg7XG4gICAgY29sb3I6IEBvbGl2ZTtcbiAgfVxuXG4gIC5ib29rcyB7XG4gICAgZm9udC1zaXplOiAxMnB4O1xuICAgIGNvbG9yOiBAZGFyay1ncmVlbjtcbiAgICBmb250LXdlaWdodDogNzAwO1xuICAgIHBhZGRpbmc6IDA7XG4gIH1cblxuICAuc3ViamVjdCB7XG4gICAgZm9udC1zaXplOiAxMXB4O1xuICB9XG5cbiAgLm9saWQge1xuICAgIGZvbnQtZmFtaWx5OiBAbW9ub3NwYWNlO1xuICB9XG5cbiAgLm5hbWUge1xuICAgIGZvbnQtc2l6ZTogMTZweDtcbiAgICBkaXNwbGF5OiBibG9jaztcbiAgICBjb2xvcjogQGJsYWNrO1xuICB9XG5cbiAgLndvcmsge1xuICAgIGZvbnQtc2l6ZTogMTFweDtcblxuICAgIC8vIHN0eWxlbGludC1kaXNhYmxlLW5leHQtbGluZSBzZWxlY3Rvci1tYXgtc3BlY2lmaWNpdHlcbiAgICBpIHtcbiAgICAgIGNvbG9yOiBAYnJvd247XG4gICAgfVxuICB9XG59XG5cbi5hY193b3JrIHtcbiAgLmNvdmVyIHtcbiAgICBmbG9hdDogbGVmdDtcbiAgICBtYXJnaW4tcmlnaHQ6IDVweDtcbiAgICB3aWR0aDogNWVtO1xuICAgIGhlaWdodDogNWVtO1xuICAgIG92ZXJmbG93OiBoaWRkZW47XG4gICAgYm9yZGVyLXJhZGl1czogMnB4O1xuICAgIG1hc2staW1hZ2U6IGxpbmVhci1ncmFkaWVudCh0byB0b3AsIHJnYmEoMCwgMCwgMCwgMCksIHJnYmEoMCwgMCwgMCwgMSkgMTUlKTtcblxuICAgIC8vIHN0eWxlbGludC1kaXNhYmxlLW5leHQtbGluZSBzZWxlY3Rvci1tYXgtc3BlY2lmaWNpdHlcbiAgICBpbWcge1xuICAgICAgd2lkdGg6IDEwMCU7XG4gICAgfVxuICB9XG5cbiAgLmVkaXRpb25fY291bnQge1xuICAgIGZvbnQtc2l6ZTogMTJweDtcbiAgICBjb2xvcjogQGRhcmstZ3JlZW47XG4gICAgZm9udC13ZWlnaHQ6IDcwMDtcbiAgICBwYWRkaW5nOiAwO1xuICB9XG5cbiAgLm9saWQge1xuICAgIGZvbnQtZmFtaWx5OiBAbW9ub3NwYWNlO1xuICB9XG5cbiAgLm5hbWUge1xuICAgIGRpc3BsYXk6IGJsb2NrO1xuICAgIGxpbmUtaGVpZ2h0OiAxLjFlbTtcbiAgfVxuXG4gIC50aXRsZSB7XG4gICAgZm9udC1zaXplOiAxNnB4O1xuICAgIGNvbG9yOiBAYmxhY2s7XG4gIH1cblxuICAuZmlyc3RfcHVibGlzaF95ZWFyIHtcbiAgICBmb250LXNpemU6IDEycHg7XG4gIH1cbn1cblxuLmFjX2xvYWRpbmcge1xuICBiYWNrZ3JvdW5kOiBAd2hpdGUgdXJsKC9pbWFnZXMvaW5kaWNhdG9yLmdpZikgcmlnaHQgY2VudGVyIG5vLXJlcGVhdDtcbn1cblxuLmFjX29kZCB7XG4gIGJhY2tncm91bmQtY29sb3I6IEBsaWdodGVzdC1ncmV5O1xufVxuXG4uYWNfZXZlbixcbi5hY19vZGQge1xuICBiYWNrZ3JvdW5kLWNvbG9yOiBpbmhlcml0O1xufVxuIiwiLyoqXG4gKiBSZWFkU3RhdHVzZXNcbiAqIGh0dHBzOi8vZ2l0aHViLmNvbS9pbnRlcm5ldGFyY2hpdmUvb3BlbmxpYnJhcnkvd2lraS9EZXNpZ24tUGF0dGVybi1MaWJyYXJ5I3JlYWRzdGF0dXNlc1xuICovXG4ucmVhZC1zdGF0dXNlcyB7XG4gIGJvcmRlci1ib3R0b206IDFweCBzb2xpZCBAbGlnaHRlc3QtZ3JleTtcbiAgYnV0dG9uIHtcbiAgICAmLnJlbW92ZS1mcm9tLWxpc3Qge1xuICAgICAgY29sb3I6IEByZWQ7XG4gICAgICAvKiBzdHlsZWxpbnQtZGlzYWJsZSBzZWxlY3Rvci1tYXgtc3BlY2lmaWNpdHkgKi9cbiAgICAgIC8qIHN0eWxlbGludC1kaXNhYmxlIG1heC1uZXN0aW5nLWRlcHRoICovXG4gICAgICAmOmhvdmVyIHtcbiAgICAgICAgY29sb3I6IEByZWQ7XG4gICAgICB9XG4gICAgICAvKiBzdHlsZWxpbnQtZW5hYmxlIG1heC1uZXN0aW5nLWRlcHRoICovXG4gICAgICAvKiBzdHlsZWxpbnQtZW5hYmxlIHNlbGVjdG9yLW1heC1zcGVjaWZpY2l0eSAqL1xuICAgIH1cblxuICAgIGJvcmRlcjogbm9uZTtcbiAgICBiYWNrZ3JvdW5kOiBub25lO1xuICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICBjb2xvcjogQGRhcmstZ3JleTtcbiAgICBmb250LXdlaWdodDogYm9sZDtcbiAgICB3aWR0aDogMTAwJTtcbiAgICB0ZXh0LWFsaWduOiBsZWZ0O1xuICAgIGZvbnQtc2l6ZTogLjhlbTtcbiAgICBwYWRkaW5nOiAxMHB4O1xuICAgIGJvcmRlci1ib3R0b206IDFweCBzb2xpZCBAbGlnaHRlc3QtZ3JleTtcbiAgICAmOmhvdmVyIHtcbiAgICAgIGNvbG9yOiBAYmxhY2s7XG4gICAgICBiYWNrZ3JvdW5kLWNvbG9yOiBAd2hpdGU7XG4gICAgfVxuICB9XG5cbiAgLyogc3R5bGVsaW50LWRpc2FibGUgc2VsZWN0b3ItbWF4LXNwZWNpZmljaXR5ICovXG4gIGZvcm06bGFzdC1jaGlsZCB7XG4gICAgYnV0dG9uLm5vc3R5bGUtYnRuIHtcbiAgICAgIGJvcmRlcjogbm9uZTtcbiAgICB9XG4gIH1cbiAgLyogc3R5bGVsaW50LWVuYWJsZSBzZWxlY3Rvci1tYXgtc3BlY2lmaWNpdHkgKi9cbn1cbiIsIi8qKlxuICogTWFuYWdlQ292ZXJzQnRuXG4gKiBodHRwczovL2dpdGh1Yi5jb20vaW50ZXJuZXRhcmNoaXZlL29wZW5saWJyYXJ5L3dpa2kvRGVzaWduLVBhdHRlcm4tTGlicmFyeSNtYW5hZ2UtY292ZXJzXG4gKi9cbi5tYW5hZ2VDb3ZlcnMge1xuICBtYXgtd2lkdGg6IDE0MHB4O1xuICBtYXJnaW46IDAgYXV0bztcbiAgcGFkZGluZzogOHB4O1xuICBib3JkZXItcmFkaXVzOiAzcHg7XG4gIGJvcmRlcjogM3B4IHNvbGlkIEBkYXJrLWdyZXk7XG4gIGJhY2tncm91bmQtY29sb3I6IEB3aGl0ZTtcbiAgY29sb3I6IEBkYXJrLWdyZXk7XG4gIGZvbnQtc2l6ZTogMTJweDtcbiAgY3Vyc29yOiBwb2ludGVyO1xuXG4gIGEge1xuICAgIGNvbG9yOiBAZGFyay1ncmV5O1xuICB9XG5cbiAgJkNvbnRhaW5lciB7XG4gICAgd2lkdGg6IDEwMCU7XG4gICAgei1pbmRleDogQHotaW5kZXgtbGV2ZWwtMTY7XG4gICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgIGJvdHRvbTogMTVweDtcbiAgICBhIHtcbiAgICAgIGRpc3BsYXk6IGJsb2NrO1xuICAgICAgdGV4dC1kZWNvcmF0aW9uOiBub25lO1xuICAgICAgb3BhY2l0eTogMDtcbiAgICAgIC8vIHN0eWxlbGludC1kaXNhYmxlLW5leHQtbGluZSBtYXgtbmVzdGluZy1kZXB0aFxuICAgICAgJjpob3ZlcixcbiAgICAgICY6Zm9jdXMge1xuICAgICAgICB0ZXh0LWRlY29yYXRpb246IHVuZGVybGluZTtcbiAgICAgIH1cbiAgICAgIC8vIFJldmVhbCB0aGUgYnV0dG9uIHdoZW4gcGFyZW50IGhvdmVyZWQgb3ZlclxuICAgICAgLy8gc3R5bGVsaW50LWRpc2FibGUtbmV4dC1saW5lIG1heC1uZXN0aW5nLWRlcHRoXG4gICAgICBkaXY6aG92ZXIgPiAmIHtcbiAgICAgICAgb3BhY2l0eTogLjk7XG4gICAgICB9XG4gICAgfVxuICB9XG59XG4iLCIvKipcbiAqIFRocm9iYmVyXG4gKiBodHRwczovL2dpdGh1Yi5jb20vaW50ZXJuZXRhcmNoaXZlL29wZW5saWJyYXJ5L3dpa2kvRGVzaWduLVBhdHRlcm4tTGlicmFyeSN0aHJvYmJlclxuICogVXNlZCBpbiBvcGVubGlicmFyeS90ZW1wbGF0ZXMvY292ZXJzL2NoYW5nZS5odG1sXG4gKi9cblxuLnRocm9iYmVyIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICB3aWR0aDogMjIwcHg7XG4gIGhlaWdodDogMTlweDtcbiAgdG9wOiAxMjBweDtcbiAgbGVmdDogMDtcbiAgdGV4dC1hbGlnbjogY2VudGVyO1xuICBiYWNrZ3JvdW5kLWNvbG9yOiB0cmFuc3BhcmVudDtcbiAgYmFja2dyb3VuZC1pbWFnZTogdXJsKC9pbWFnZXMvYWpheC1sb2FkZXItYmFyLmdpZik7XG4gIGJhY2tncm91bmQtcmVwZWF0OiBuby1yZXBlYXQ7XG4gIGgzIHtcbiAgICBtYXJnaW4tdG9wOiAzNXB4O1xuICB9XG59XG5cbkBtZWRpYSBvbmx5IHNjcmVlbiBhbmQgKG1pbi13aWR0aDogQHdpZHRoLWJyZWFrcG9pbnQtdGFibGV0KSB7XG4gIC50aHJvYmJlciB7XG4gICAgdG9wOiAyODBweDtcbiAgICBsZWZ0OiAyMTBweDtcbiAgfVxufVxuIiwiLyoqXG4gKiBDdGFCdG5cbiAqIGh0dHBzOi8vZ2l0aHViLmNvbS9pbnRlcm5ldGFyY2hpdmUvb3BlbmxpYnJhcnkvd2lraS9EZXNpZ24tUGF0dGVybi1MaWJyYXJ5I2N0YWJ0blxuICogVGhpcyBzdHlsZXNoZWV0IHdpbGwgb25seSBhcHBseSBpZiBKUyBpcyBwcmVzZW50IG9uIHRoZSBwYWdlLlxuICovXG5AaW1wb3J0IFwiLi4vbGVzcy9pbmRleC5sZXNzXCI7XG5cbi8vIGBhYCBzcGVjaWZpY2l0eSBpcyBuZWVkZWQgdG8gb3ZlcnJpZGUgZGVmYXVsdCBhbmNob3Igc3R5bGVzXG4uY3RhLWJ0bixcbmEuY3RhLWJ0biB7XG4gICYtLWF2YWlsYWJsZSB7XG4gICAgJi0tbG9hZCB7XG4gICAgICBiYWNrZ3JvdW5kOiB1cmwoL3N0YXRpYy9pbWFnZXMvaW5kaWNhdG9yLmdpZikgY2VudGVyIGNlbnRlciBuby1yZXBlYXQ7XG4gICAgICBiYWNrZ3JvdW5kLWNvbG9yOiBAcHJpbWFyeS1ibHVlICFpbXBvcnRhbnQ7XG4gICAgICBvcGFjaXR5OiAuNjtcbiAgICB9XG4gIH1cbiAgJi0tdW5hdmFpbGFibGUge1xuICAgICYtLWxvYWQge1xuICAgICAgYmFja2dyb3VuZDogdXJsKC9zdGF0aWMvaW1hZ2VzL2luZGljYXRvci5naWYpIGNlbnRlciBjZW50ZXIgbm8tcmVwZWF0O1xuICAgICAgYmFja2dyb3VuZC1jb2xvcjogQHByaW1hcnktYmx1ZSAhaW1wb3J0YW50O1xuICAgICAgb3BhY2l0eTogLjY7XG4gICAgfVxuICB9XG59XG4iLCJAaW1wb3J0IChsZXNzKSBcIi4uL2xlc3Mvei1pbmRleC5sZXNzXCI7XG4vKipcbiAqIFRhYlBhbmVsXG4gKiBodHRwczovL2dpdGh1Yi5jb20vaW50ZXJuZXRhcmNoaXZlL29wZW5saWJyYXJ5L3dpa2kvRGVzaWduLVBhdHRlcm4tTGlicmFyeSN0YWJzcGFuZWxcbiAqL1xuXG4udWktdGFicyB7XG4gICYtbmF2LFxuICAmLXBhbmVsIHtcbiAgICBmb250LWZhbWlseTogQGx1Y2lkYV9zYW5zX3NlcmlmLTE7XG4gIH1cblxuICAmLW5hdiB7XG4gICAgbGlzdC1zdHlsZTogbm9uZSAhaW1wb3J0YW50O1xuICAgIG1hcmdpbjogMCAwIDE4cHggIWltcG9ydGFudDtcbiAgICBjbGVhcjogcmlnaHQ7XG4gICAgJjphZnRlciB7IC8qIGNsZWFyaW5nIHdpdGhvdXQgcHJlc2VudGF0aW9uYWwgbWFya3VwLCBJRSBnZXRzIGV4dHJhIHRyZWF0bWVudCAqL1xuICAgICAgZGlzcGxheTogYmxvY2s7XG4gICAgICBjbGVhcjogYm90aDtcbiAgICAgIGNvbnRlbnQ6IFwiIFwiO1xuICAgIH1cbiAgICBsaSB7XG4gICAgICBsaXN0LXN0eWxlOiBub25lICFpbXBvcnRhbnQ7XG4gICAgICBtYXJnaW46IDAgMCAwIDFweDtcbiAgICAgIG1pbi13aWR0aDogNTRweDsgLyogYmUgbmljZSB0byBPcGVyYSAqL1xuICAgIH1cbiAgICBhIHtcbiAgICAgIGRpc3BsYXk6IGJsb2NrO1xuICAgICAgZm9udC13ZWlnaHQ6IDYwMDtcbiAgICAgIGZvbnQtc2l6ZTogLjY4NzVlbTtcbiAgICAgIGJhY2tncm91bmQ6IEB3aGl0ZTtcbiAgICAgIGJvcmRlci1ib3R0b206IDNweCBzb2xpZCBAbGlnaHRlc3QtZ3JleTtcbiAgICAgIHBhZGRpbmc6IDRweCA4cHggM3B4O1xuICAgICAgdGV4dC1kZWNvcmF0aW9uOiBub25lO1xuICAgICAgdGV4dC10cmFuc2Zvcm06IHVwcGVyY2FzZTtcbiAgICAgIHdoaXRlLXNwYWNlOiBub3dyYXA7IC8qIHJlcXVpcmVkIGluIElFIDYgKi9cbiAgICAgIG91dGxpbmU6IDA7IC8qIHByZXZlbnQgZG90dGVkIGJvcmRlciBpbiBGaXJlZm94ICovXG4gICAgICAvKiBzdHlsZWxpbnQtZGlzYWJsZSBtYXgtbmVzdGluZy1kZXB0aCAqL1xuICAgICAgJjpsaW5rLFxuICAgICAgJjp2aXNpdGVkIHtcbiAgICAgICAgY29sb3I6IEBsaW5rLWJsdWU7XG4gICAgICB9XG4gICAgICAmOmhvdmVyIHtcbiAgICAgICAgY29sb3I6IEBsaW5rLWJsdWU7XG4gICAgICAgIHRleHQtZGVjb3JhdGlvbjogdW5kZXJsaW5lO1xuICAgICAgfVxuICAgICAgLyogc3R5bGVsaW50LWVuYWJsZSBtYXgtbmVzdGluZy1kZXB0aCAqL1xuICAgIH1cbiAgICAvKiBzdHlsZWxpbnQtZGlzYWJsZSBzZWxlY3Rvci1tYXgtc3BlY2lmaWNpdHkgKi9cbiAgICAudWktdGFicy1hY3RpdmUge1xuXG4gICAgICAvKiBzdHlsZWxpbnQtZGlzYWJsZSBtYXgtbmVzdGluZy1kZXB0aCAqL1xuICAgICAgYSB7XG4gICAgICAgICY6bGluayxcbiAgICAgICAgJjp2aXNpdGVkIHsgLyogQCBPcGVyYSwgdXNlIHBzZXVkbyBjbGFzc2VzIG90aGVyd2lzZSBpdCBjb25mdXNlcyBjdXJzb3IuLi4gKi9cbiAgICAgICAgICBiYWNrZ3JvdW5kOiBAbGlnaHRlc3QtZ3JleTtcbiAgICAgICAgICBib3JkZXI6IDFweCBzb2xpZCBAbGlnaHRlc3QtZ3JleTtcbiAgICAgICAgICBib3JkZXItYm90dG9tOiAzcHggc29saWQgQGxpZ2h0ZXN0LWdyZXk7XG4gICAgICAgICAgY29sb3I6IEB0ZWFsO1xuICAgICAgICAgIGN1cnNvcjogZGVmYXVsdDtcbiAgICAgICAgfVxuICAgICAgfVxuICAgICAgLyogc3R5bGVsaW50LWVuYWJsZSBtYXgtbmVzdGluZy1kZXB0aCAqL1xuICAgIH1cbiAgICAvKiBzdHlsZWxpbnQtZGlzYWJsZSBuby1kZXNjZW5kaW5nLXNwZWNpZmljaXR5ICovXG4gICAgYTpob3ZlcixcbiAgICBhOmZvY3VzLFxuICAgIGE6YWN0aXZlLFxuICAgIC51aS10YWJzLWRlc2VsZWN0YWJsZSBhOmhvdmVyLFxuICAgIC51aS10YWJzLWRlc2VsZWN0YWJsZSBhOmZvY3VzLFxuICAgIC51aS10YWJzLWRlc2VsZWN0YWJsZSBhOmFjdGl2ZSB7IC8qIEAgT3BlcmEsIHdlIG5lZWQgdG8gYmUgZXhwbGljaXQgYWdhaW4gaGVyZSBub3cuLi4gKi9cbiAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICB9XG4gICAgLyogc3R5bGVsaW50LWVuYWJsZSBuby1kZXNjZW5kaW5nLXNwZWNpZmljaXR5ICovXG4gICAgLyogc3R5bGVsaW50LWVuYWJsZSBzZWxlY3Rvci1tYXgtc3BlY2lmaWNpdHkgKi9cbiAgfVxuICAmLWRpc2FibGVkIHtcbiAgICBvcGFjaXR5OiAuNDtcbiAgICBmaWx0ZXI6IGFscGhhKG9wYWNpdHk9NDApO1xuICB9XG4gICYtcGFuZWwge1xuICAgIGJvcmRlcjogM3B4IHNvbGlkIEBsaWdodGVzdC1ncmV5O1xuICAgIGJhY2tncm91bmQ6IEB3aGl0ZTtcbiAgICAvKiBkZWNsYXJlIGJhY2tncm91bmQgY29sb3IgZm9yIGNvbnRhaW5lciB0byBhdm9pZCBkaXN0b3J0ZWQgZm9udHMgaW4gSUUgd2hpbGUgZmFkaW5nICovXG4gIH1cbiAgJi1sb2FkaW5nIHtcbiAgICBlbSB7XG4gICAgICBwYWRkaW5nOiAwIDAgMCAyMHB4O1xuICAgIH1cbiAgfVxufVxuXG4vLyBUaGVzZSBydWxlcyBhcHBseSB3aXRoaW4gb3ZlcmxheXNcbi8vIGUuZy4gd2hlbiB5b3UgY2xpY2sgXCJjaGFuZ2UgY292ZXJcIiBvbiBhIGJvb2tzIHBhZ2Vcbi8vIE5lZWQgdG8gaW52ZXN0aWdhdGUgd2hldGhlciB0aGVzZSBjYW4gYmUgZ2VuZXJhbGlzZWQgc29tZWhvdy5cbi5mbG9hdGVyIHtcbiAgLnVpLXRhYnMtcGFuZWwge1xuICAgIGJvcmRlcjogbm9uZTtcbiAgICBiYWNrZ3JvdW5kOiBAd2hpdGU7XG4gICAgLyogZGVjbGFyZSBiYWNrZ3JvdW5kIGNvbG9yIGZvciBjb250YWluZXIgdG8gYXZvaWQgZGlzdG9ydGVkIGZvbnRzIGluIElFIHdoaWxlIGZhZGluZyAqL1xuICB9XG59XG5cbi8qIEFkZGl0aW9uYWwgSUUgc3BlY2lmaWMgYnVnIGZpeGVzLi4uICovXG4qIGh0bWwgLnVpLXRhYnMtbmF2IHsgLyogYXV0byBjbGVhciwgQCBJRSA2ICYgSUUgNyBRdWlya3MgTW9kZSAqL1xuICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XG59XG5cbio6Zmlyc3QtY2hpbGQgKyBodG1sIC51aS10YWJzLW5hdiB7XG4gIC8qIEAgSUUgNyBTdGFuZGFyZHMgTW9kZSAtIGRvIG5vdCBncm91cCBzZWxlY3RvcnMsXG4gIG90aGVyd2lzZSBJRSA2IHdpbGwgaWdub3JlIGNvbXBsZXRlIHJ1bGUgKGJlY2F1c2Ugb2YgdGhlIHVua25vd24gKyBjb21iaW5hdG9yKS4uLiAqL1xuICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XG59XG5cbkBtZWRpYSBvbmx5IHNjcmVlbiBhbmQgKG1pbi13aWR0aDogQHdpZHRoLWJyZWFrcG9pbnQtdGFibGV0KSB7XG4gIC5mbG9hdGVyIHtcbiAgICAudWktdGFicy1wYW5lbCB7XG4gICAgICBib3JkZXItdG9wOiAzcHggc29saWQgQGxpZ2h0ZXN0LWdyZXk7XG4gICAgICBwYWRkaW5nOiAxNXB4IDMwcHggIWltcG9ydGFudDtcbiAgICAgIC8qIGRlY2xhcmUgYmFja2dyb3VuZCBjb2xvciBmb3IgY29udGFpbmVyIHRvIGF2b2lkIGRpc3RvcnRlZCBmb250cyBpbiBJRSB3aGlsZSBmYWRpbmcgKi9cbiAgICB9XG4gIH1cblxuICAudGFicy1wYW5lbCB7XG4gICAgcGFkZGluZzogMTVweCAzMHB4IDIwcHggIWltcG9ydGFudDtcbiAgfVxuICAudWktdGFicy1uYXYge1xuICAgIG1hcmdpbi1ib3R0b206IC0zcHggIWltcG9ydGFudDtcbiAgICBsaSB7XG4gICAgICBmbG9hdDogbGVmdDtcbiAgICB9XG4gICAgYSB7XG4gICAgICBtYXJnaW46IDhweCAzcHggMDtcbiAgICB9XG4gICAgLnVpLXRhYnMtYWN0aXZlIHtcbiAgICAgIGEge1xuICAgICAgICBwYWRkaW5nOiAycHggOHB4IDNweDtcbiAgICAgIH1cbiAgICB9XG4gIH1cbn1cblxuLyogQ2F1dGlvbiEgRW5zdXJlIGFjY2Vzc2liaWxpdHkgaW4gcHJpbnQgYW5kIG90aGVyIG1lZGlhIHR5cGVzLi4uICovXG5AbWVkaWEgcHJvamVjdGlvbiwgc2NyZWVuLCBwcmludCB7XG4gIC8qIFVzZSBjbGFzcyBmb3Igc2hvd2luZy9oaWRpbmcgdGFiIGNvbnRlbnQsXG4gIHNvIHRoYXQgdmlzaWJpbGl0eSBjYW4gYmUgYmV0dGVyIGNvbnRyb2xsZWQgaW4gZGlmZmVyZW50IG1lZGlhIHR5cGVzLi4uICovXG4gIC51aS10YWJzLWhpZGUge1xuICAgIGRpc3BsYXk6IG5vbmU7XG4gIH1cbn1cbiIsIi8qKlxuICogVUktRGlhbG9nXG4gKiBodHRwczovL2dpdGh1Yi5jb20vaW50ZXJuZXRhcmNoaXZlL29wZW5saWJyYXJ5L3dpa2kvRGVzaWduLVBhdHRlcm4tTGlicmFyeSN1aS1kaWFsb2dcbiAqL1xuLnVpLWRpYWxvZyB7XG4gIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgd2lkdGg6IDQwMHB4O1xuICBwYWRkaW5nOiAxMHB4O1xuICBiYWNrZ3JvdW5kLWNvbG9yOiBAd2hpdGU7XG4gIGJvcmRlci1yYWRpdXM6IDEycHg7XG4gIC13ZWJraXQtYm94LXNoYWRvdzogMXB4IDNweCAxMHB4IEBibGFjaztcbiAgYm94LXNoYWRvdzogMXB4IDNweCAxMHB4IEBibGFjaztcbiAgei1pbmRleDogQHotaW5kZXgtbGV2ZWwtMTQgIWltcG9ydGFudDtcbiAgLnVpLWRpYWxvZy10aXRsZWJhciB7XG4gICAgcG9zaXRpb246IHJlbGF0aXZlO1xuICAgIGZvbnQtd2VpZ2h0OiBub3JtYWw7XG4gICAgY29sb3I6IEBkYXJrLWdyZXk7XG4gICAgZm9udC1zaXplOiAxZW07XG4gICAgbWFyZ2luOiAuMmVtIDA7XG4gICAgcGFkZGluZzogOHB4IDA7XG4gICAgZGlzcGxheTogZmxleDtcbiAgfVxuICAudWktZGlhbG9nLXRpdGxlYmFyLWNsb3NlIHNwYW4ge1xuICAgIGRpc3BsYXk6IGNvbnRlbnRzO1xuICB9XG4gIC5pLWRpYWxvZy10aXRsZSB7XG4gICAgZmxleDogMTtcbiAgfVxuICAudWktZGlhbG9nLWNvbnRlbnQge1xuICAgIHBhZGRpbmc6IC41ZW0gMWVtO1xuICAgIGJhY2tncm91bmQ6IG5vbmU7XG4gICAgb3ZlcmZsb3c6IGF1dG87XG4gICAgem9vbTogMTtcbiAgICBwIHtcbiAgICAgIG1pbi1oZWlnaHQ6IDI4cHg7XG4gICAgICBwYWRkaW5nOiA2cHggMzNweCAwO1xuICAgICAgYmFja2dyb3VuZDogdXJsKC9pbWFnZXMvaWNvbnMvaWNvbl9hbGVydC5wbmcpIG5vLXJlcGVhdCAwIDA7XG4gICAgICBtYXJnaW46IDA7XG4gICAgfVxuICB9XG4gIC51aS1kaWFsb2ctYnV0dG9ucGFuZSB7XG4gICAgdGV4dC1hbGlnbjogY2VudGVyO1xuICAgIG1hcmdpbi1ib3R0b206IDEwcHg7XG4gIH1cbiAgLnVpLWRpYWxvZy1idXR0b25wYW5lIGJ1dHRvbiB7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIHdpZHRoOiBhdXRvO1xuICAgIG92ZXJmbG93OiB2aXNpYmxlO1xuICAgIGZvbnQtc2l6ZTogMThweDtcbiAgICBtYXJnaW46IDAgOHB4O1xuICB9XG59XG5cbi51aSB7XG4gICYtZHJhZ2dhYmxlIHtcbiAgICAudWktZGlhbG9nLXRpdGxlYmFyIHtcbiAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICBjdXJzb3I6IG1vdmU7XG4gICAgfVxuICAgIC51aS1kaWFsb2ctdGl0bGUge1xuICAgICAgZmxleDogMTtcbiAgICB9XG4gICAgLnVpLWRpYWxvZy10aXRsZWJhci1jbG9zZSBzcGFuIHtcbiAgICAgIGRpc3BsYXk6IGNvbnRlbnRzO1xuICAgIH1cbiAgfVxufVxuXG4qIGh0bWwge1xuICAudWktaGVscGVyLWNsZWFyZml4IHtcbiAgICBoZWlnaHQ6IDElO1xuICB9XG59XG4iLCIvKipcbiAqIFdtZCBQcm9tcHQgRGlhbG9nXG4gKiBodHRwczovL2dpdGh1Yi5jb20vaW50ZXJuZXRhcmNoaXZlL29wZW5saWJyYXJ5L3dpa2kvRGVzaWduLVBhdHRlcm4tTGlicmFyeSN3bWRwcm9tcHRkaWFsb2dcbiAqIHRoZXNlIGRpYWxvZ3MgY2FuIGJlIHNlZW4gd2hlbiB3bWQtYnV0dG9uLWJhciBpY29uIGlzIGNsaWNrZWQgZS5nLiBhZGQgbGlua1xuICovXG5cbi8vIFRoZXNlICFpbXBvcnRhbnQncyBhcmUgYSBuZWNlc3NhcnkgZXZpbC5cbi8vIFRoZXkgY29tcGVuc2F0ZSBmb3IgdGhlIGZhY3QgdGhhdCBqcXVlcnkud21kLmpzIHdhcyBub3Qgd3JpdHRlbiBmb3IgbW9iaWxlLlxuLy8gVGhlIGxpYnJhcnkgbXVzdCBiZSBmb3JrZWQgdG8gYmUgbW9iaWxlIGZyaWVuZGx5XG4vLyBhcyB0aGF0IGxpYnJhcnkgaXMgbm8gbG9uZ2VyIG1haW50YWluZWQuXG4vLyBVbnRpbCB0aGVuLi4gaGFja3MhXG5AbWVkaWEgYWxsIGFuZCAobWF4LXdpZHRoOiBAd2lkdGgtYnJlYWtwb2ludC10YWJsZXQpIHtcbiAgLndtZC1wcm9tcHQtZGlhbG9nIHtcbiAgICBtYXJnaW4tbGVmdDogMTBweCAhaW1wb3J0YW50O1xuICAgIG1hcmdpbi10b3A6IDEwcHggIWltcG9ydGFudDtcbiAgICB0b3A6IDEwMHB4ICFpbXBvcnRhbnQ7XG4gICAgbGVmdDogMCAhaW1wb3J0YW50O1xuICAgIHJpZ2h0OiAwICFpbXBvcnRhbnQ7XG4gICAgd2lkdGg6IDMwMHB4ICFpbXBvcnRhbnQ7XG4gIH1cbn1cblxuLndtZC1wcm9tcHQtZGlhbG9nIHtcbiAgd2lkdGg6IDQwMHB4O1xuICBib3JkZXI6IDEwcHggc29saWQgQGJyb3duO1xuICBiYWNrZ3JvdW5kLWNvbG9yOiBAd2hpdGU7XG4gIC13ZWJraXQtYm9yZGVyLXJhZGl1czogMTJweDtcbiAgLW1vei1ib3JkZXItcmFkaXVzOiAxMnB4O1xuICBib3JkZXItcmFkaXVzOiAxMnB4O1xuICAtbW96LWJveC1zaGFkb3c6IDFweCAzcHggMTBweCBAYmxhY2s7XG4gIC13ZWJraXQtYm94LXNoYWRvdzogMXB4IDNweCAxMHB4IEBibGFjaztcbiAgYm94LXNoYWRvdzogMXB4IDNweCAxMHB4IEBibGFjaztcbiAgdGV4dC1hbGlnbjogbGVmdDtcblxuICA+ICBkaXYge1xuICAgIGZvbnQtc2l6ZTogMTRweDtcbiAgICBmb250LWZhbWlseTogQGx1Y2lkYV9zYW5zX3NlcmlmLTI7XG4gICAgY29sb3I6IEBkYXJrZXItZ3JleTtcbiAgICBwYWRkaW5nOiAyMHB4ICFpbXBvcnRhbnQ7XG4gICAgcCB7XG4gICAgICBtYXJnaW4tYm90dG9tOiAwICFpbXBvcnRhbnQ7XG4gICAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgfVxuICB9XG4gID4gZm9ybSB7XG4gICAgd2lkdGg6IDQ4MHB4O1xuICAgIHBhZGRpbmc6IDIwcHg7XG4gICAgcGFkZGluZy10b3A6IDA7XG4gICAgPiBpbnB1dFt0eXBlPXRleHRdIHtcbiAgICAgIGZsb2F0OiBsZWZ0O1xuICAgICAgbWFyZ2luLWxlZnQ6IDIwcHggIWltcG9ydGFudDtcbiAgICAgIGNsZWFyOiBib3RoO1xuICAgICAgd2lkdGg6IDM1MHB4O1xuICAgICAgZm9udC1zaXplOiAxLjEyNWVtO1xuICAgICAgZm9udC1mYW1pbHk6IEBsdWNpZGFfc2Fuc19zZXJpZi0xO1xuICAgICAgcGFkZGluZzogM3B4O1xuICAgIH1cbiAgICA+IGlucHV0W3R5cGU9XCJidXR0b25cIl0ge1xuICAgICAgZm9udC1zaXplOiAxLjEyNWVtO1xuICAgICAgd2lkdGg6IGF1dG8gIWltcG9ydGFudDtcbiAgICB9XG4gIH1cbiAgcCBiIHtcbiAgICBkaXNwbGF5OiBibG9jaztcbiAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogQGJyb3duO1xuICAgIHBhZGRpbmc6IDAgMTBweCAxMHB4O1xuICAgIGNvbG9yOiBAd2hpdGU7XG4gICAgZm9udC1mYW1pbHk6IEBuZXdzX2dvdGhpY19zYW5zX3NlcmlmO1xuICAgIGZvbnQtc2l6ZTogMS43NWVtO1xuICAgIHRvcDogLTIwcHg7XG4gICAgbGVmdDogLTIxcHg7XG4gICAgd2lkdGg6IDI4MnB4O1xuICB9XG59XG5cbkBtZWRpYSBhbGwgYW5kICggbWluLXdpZHRoOiBAd2lkdGgtYnJlYWtwb2ludC10YWJsZXQgKSB7XG4gIC53bWQtcHJvbXB0LWRpYWxvZyB7XG4gICAgcCBiIHtcbiAgICAgIHdpZHRoOiAzODBweDtcbiAgICB9XG4gIH1cbn1cbiJdLCJzb3VyY2VSb290IjoiIn0= */</style><style>.rdp {
+  --rdp-cell-size: 40px;
+  --rdp-accent-color: #0000ff;
+  --rdp-background-color: #e7edff;
+  --rdp-accent-color-dark: #3003e1;
+  --rdp-background-color-dark: #180270;
+  --rdp-outline: 2px solid var(--rdp-accent-color); /* Outline border for focused elements */
+  --rdp-outline-selected: 2px solid rgba(0, 0, 0, 0.75); /* Outline border for focused _and_ selected elements */
+
+  margin: 1em;
+}
+
+/* Hide elements for devices that are not screen readers */
+.rdp-vhidden {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  position: absolute !important;
+  top: 0;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(1px, 1px, 1px, 1px) !important;
+  border: 0 !important;
+}
+
+/* Buttons */
+.rdp-button_reset {
+  appearance: none;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  cursor: default;
+  color: inherit;
+  outline: none;
+  background: none;
+  font: inherit;
+
+  -moz-appearance: none;
+  -webkit-appearance: none;
+}
+
+.rdp-button {
+  border: 2px solid transparent;
+}
+
+.rdp-button[disabled] {
+  opacity: 0.25;
+}
+
+.rdp-button:not([disabled]) {
+  cursor: pointer;
+}
+
+.rdp-button:focus:not([disabled]),
+.rdp-button:active:not([disabled]) {
+  color: inherit;
+  border: var(--rdp-outline);
+  background-color: var(--rdp-background-color);
+}
+
+.rdp-button:hover:not([disabled]) {
+  background-color: var(--rdp-background-color);
+}
+
+.rdp-months {
+  display: flex;
+}
+
+.rdp-month {
+  margin: 0 1em;
+}
+
+.rdp-month:first-child {
+  margin-left: 0;
+}
+
+.rdp-month:last-child {
+  margin-right: 0;
+}
+
+.rdp-table {
+  margin: 0;
+  max-width: calc(var(--rdp-cell-size) * 7);
+  border-collapse: collapse;
+}
+
+.rdp-with_weeknumber .rdp-table {
+  max-width: calc(var(--rdp-cell-size) * 8);
+  border-collapse: collapse;
+}
+
+.rdp-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+  text-align: left;
+}
+
+.rdp-multiple_months .rdp-caption {
+  position: relative;
+  display: block;
+  text-align: center;
+}
+
+.rdp-caption_dropdowns {
+  position: relative;
+  display: inline-flex;
+}
+
+.rdp-caption_label {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 0 0.25em;
+  white-space: nowrap;
+  color: currentColor;
+  border: 0;
+  border: 2px solid transparent;
+  font-family: inherit;
+  font-size: 140%;
+  font-weight: bold;
+}
+
+.rdp-nav {
+  white-space: nowrap;
+}
+
+.rdp-multiple_months .rdp-caption_start .rdp-nav {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+
+.rdp-multiple_months .rdp-caption_end .rdp-nav {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+}
+
+.rdp-nav_button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--rdp-cell-size);
+  height: var(--rdp-cell-size);
+  padding: 0.25em;
+  border-radius: 100%;
+}
+
+/* ---------- */
+/* Dropdowns  */
+/* ---------- */
+
+.rdp-dropdown_year,
+.rdp-dropdown_month {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.rdp-dropdown {
+  appearance: none;
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  cursor: inherit;
+  opacity: 0;
+  border: none;
+  background-color: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.rdp-dropdown[disabled] {
+  opacity: unset;
+  color: unset;
+}
+
+.rdp-dropdown:focus:not([disabled]) + .rdp-caption_label,
+.rdp-dropdown:active:not([disabled]) + .rdp-caption_label {
+  border: var(--rdp-outline);
+  border-radius: 6px;
+  background-color: var(--rdp-background-color);
+}
+
+.rdp-dropdown_icon {
+  margin: 0 0 0 5px;
+}
+
+.rdp-head {
+  border: 0;
+}
+
+.rdp-head_row,
+.rdp-row {
+  height: 100%;
+}
+
+.rdp-head_cell {
+  vertical-align: middle;
+  text-transform: uppercase;
+  font-size: 0.75em;
+  font-weight: 700;
+  text-align: center;
+  height: 100%;
+  height: var(--rdp-cell-size);
+  padding: 0;
+}
+
+.rdp-tbody {
+  border: 0;
+}
+
+.rdp-tfoot {
+  margin: 0.5em;
+}
+
+.rdp-cell {
+  width: var(--rdp-cell-size);
+  height: 100%;
+  height: var(--rdp-cell-size);
+  padding: 0;
+  text-align: center;
+}
+
+.rdp-weeknumber {
+  font-size: 0.75em;
+}
+
+.rdp-weeknumber,
+.rdp-day {
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: var(--rdp-cell-size);
+  max-width: var(--rdp-cell-size);
+  height: var(--rdp-cell-size);
+  margin: 0;
+  border: 2px solid transparent;
+  border-radius: 100%;
+}
+
+.rdp-day_today:not(.rdp-day_outside) {
+  font-weight: bold;
+}
+
+.rdp-day_selected:not([disabled]),
+.rdp-day_selected:focus:not([disabled]),
+.rdp-day_selected:active:not([disabled]),
+.rdp-day_selected:hover:not([disabled]) {
+  color: white;
+  background-color: var(--rdp-accent-color);
+}
+
+.rdp-day_selected:focus:not([disabled]) {
+  border: var(--rdp-outline-selected);
+}
+
+.rdp:not([dir='rtl']) .rdp-day_range_start:not(.rdp-day_range_end) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.rdp:not([dir='rtl']) .rdp-day_range_end:not(.rdp-day_range_start) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.rdp[dir='rtl'] .rdp-day_range_start:not(.rdp-day_range_end) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.rdp[dir='rtl'] .rdp-day_range_end:not(.rdp-day_range_start) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.rdp-day_range_end.rdp-day_range_start {
+  border-radius: 100%;
+}
+
+.rdp-day_range_middle {
+  border-radius: 0;
+}
+</style></head>
+
+
+
+
+<body class=" client-js" data-new-gr-c-s-check-loaded="14.1207.0" data-gr-ext-installed="">
+  <script>
+      // Provide a signal that JS will load
+      document.body.className += ' client-js';
+  </script>
+  <span id="top"></span>
+  <div id="offline-info">It looks like you're offline.</div>
+  
+  
+  
+<div id="topNotice">
+  <div class="page-banner page-banner-black page-banner-center">
+    <div class="iaBar">
+        <a class="iaLogo" href="https://archive.org/"><img alt="Internet Archive logo" src="./Open Library Search API_files/ia-logo.svg" width="160"></a>
+        
+        <a class="ghost-btn" href="https://archive.org/donate/?platform=ol&amp;origin=olwww-TopNavDonateButton" data-ol-link-track="IABar|DonateButton">Donate <span class="heart" aria-hidden="true">♥</span></a>
+      <div class="language-component header-dropdown">
+        <details>
+          <summary>
+            <span>English (en)</span>
+            <img class="translate-icon" src="./Open Library Search API_files/language-icon.svg" title="Change Website Language" alt="Change Website Language">
+          </summary>
+          <div class="language-dropdown-component">
+            
+<ul class="locale-options dropdown-menu">
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="cs" data-lang-id="cs" title="Czech">Čeština (cs)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="de" data-lang-id="de" title="German">Deutsch (de)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="en" data-lang-id="en" title="English">English (en)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="es" data-lang-id="es" title="Spanish">Español (es)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="fr" data-lang-id="fr" title="French">Français (fr)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="hr" data-lang-id="hr" title="Croatian">Hrvatski (hr)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="it" data-lang-id="it" title="Italian">Italiano (it)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="pt" data-lang-id="pt" title="Portuguese">Português (pt)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="hi" data-lang-id="hi" title="Hindi">हिंदी (hi)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="sc" data-lang-id="sc" title="Sardinian">Sardu (sc)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="te" data-lang-id="te" title="Telugu">తెలుగు (te)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="uk" data-lang-id="uk" title="Ukrainian">Українська (uk)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="zh" data-lang-id="zh" title="Chinese">中文 (zh)</a></li> 
+</ul>
+
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+<header id="header-bar" class="header-bar">
+
+
+
+  <div class="logo-component">
+    <a href="https://openlibrary.org/" title="The Internet Archive&#39;s Open Library: One page for every book">
+      <div class="logo-txt">
+        <img class="logo-icon" src="./Open Library Search API_files/openlibrary-logo-tighter.svg" width="189" height="47" alt="Open Library logo">
+      </div>
+    </a>
+  </div>
+
+
+  <ul class="navigation-component">
+    <li>
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="mybooks-component header-dropdown">
+  <a href="https://openlibrary.org/account/books" data-ol-link-track="MainNav|MyBooks">My Books</a>
+</div>
+</li>
+    <li>
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="browse-component header-dropdown">
+  <details>
+    <summary>
+      Browse
+      <span class="shift">Menu</span>
+      
+      <img class="down-arrow" aria-hidden="true" src="./Open Library Search API_files/down-arrow.png" alt="" role="presentation" width="7" height="4">
+    </summary>
+    <div class="browse-dropdown-component navigation-dropdown-component">
+      <ul class="dropdown-menu browse-dropdown-menu">
+        <li>
+        <a href="https://openlibrary.org/subjects" data-ol-link-track="MainNav|Subjects">
+          Subjects
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/trending" data-ol-link-track="MainNav|Trending">
+          Trending
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/explore" data-ol-link-track="MainNav|Explore">
+          Library Explorer
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/lists" data-ol-link-track="MainNav|Lists">
+          Lists
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/collections" data-ol-link-track="MainNav|Collections">
+          Collections
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/k-12" data-ol-link-track="MainNav|K12Library">
+          K-12 Student Library
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/booktalks" data-ol-link-track="MainNav|BookTalks">
+          Book Talks
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/random" data-ol-link-track="MainNav|RandomBook">
+          Random Book
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/advancedsearch" data-ol-link-track="MainNav|AdvancedSearch">
+          Advanced Search
+        </a>
+        </li>
+      </ul>
+    </div>
+  </details>
+</div>
+</li>
+  </ul>
+
+  <div class="search-component">
+    <div class="search-bar-component">
+      <div class="search-bar">
+        <div class="search-facet">
+          <label class="search-facet-selector">
+            <span aria-hidden="true" class="search-facet-value">All</span>
+            <select aria-label="Search by">
+              <option value="all">All</option>
+              <option value="title">Title</option>
+              <option value="author">Author</option>
+              <option value="text">Text</option>
+              <option value="subject">Subject</option>
+              <option value="lists">Lists</option>
+              <option value="advanced">Advanced</option>
+            </select>
+          </label>
+        </div>
+        <form class="search-bar-input" action="https://openlibrary.org/search" method="get">
+          <input type="text" name="q" placeholder="Search" aria-label="Search" autocomplete="off">
+          <input name="mode" type="checkbox" aria-hidden="true" aria-label="Search checkbox" checked="checked" value="everything" id="ftokenstop" class="hidden instantsearch-mode">
+          <input type="submit" value="" class="search-bar-submit" aria-label="Search submit">
+          <div class="vertical-separator"></div>
+          <a id="barcode_scanner_link" class="search-by-barcode-submit" aria-label="Search by barcode" title="Search by barcode" href="https://openlibrary.org/barcodescanner?returnTo=/isbn/$$$">
+          </a>
+        </form>
+      </div>
+      <div class="search-dropdown">
+        <ul class="search-results">
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="hamburger-component header-dropdown">
+  <details>
+    <summary data-ol-link-track="HeaderBar|Hamburger">
+      <img class="account__icon" src="./Open Library Search API_files/@niaholmes2154" alt="My account" title="niaholmes2154
+Joined 8 minutes ago">
+      <img class="hamburger__icon logged" src="./Open Library Search API_files/hamburger-icon.svg" alt="additional options menu">
+      <img class="down-arrow" aria-hidden="true" src="./Open Library Search API_files/down-arrow.png" alt="" role="presentation" width="7" height="4">
+    </summary>
+    <div class="mask-menu"></div>
+    <div class="app-drawer">
+      <ul class="dropdown-menu hamburger-dropdown-menu">
+        <li class="subsection">
+          My Open Library
+        </li>
+        <li>
+        <a href="https://openlibrary.org/account/books" data-ol-link-track="Hamburger|MyBooks">
+          My Books
+          <br>
+          <i class="subheading">Loans, Reading Log, Lists, Stats</i>
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/people/niaholmes2154" data-ol-link-track="Hamburger|MyProfile">
+          My Profile
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/account" data-ol-link-track="Hamburger|MySettings">
+          Settings
+        </a>
+        </li>
+        <li>
+        <form name="hamburger-logout" action="https://openlibrary.org/account/logout" method="post">
+          <button data-ol-link-track="Hamburger|Logout">Log out</button>
+        </form>
+        </li>
+        <li class="subsection">
+          Browse
+        </li>
+        <li>
+        <a href="https://openlibrary.org/subjects" data-ol-link-track="Hamburger|Subjects">
+          Subjects
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/trending" data-ol-link-track="Hamburger|Trending">
+          Trending
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/explore" data-ol-link-track="Hamburger|Explore">
+          Library Explorer
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/lists" data-ol-link-track="Hamburger|Lists">
+          Lists
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/collections" data-ol-link-track="Hamburger|Collections">
+          Collections
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/k-12" data-ol-link-track="Hamburger|K12Library">
+          K-12 Student Library
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/booktalks" data-ol-link-track="Hamburger|BookTalks">
+          Book Talks
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/random" data-ol-link-track="Hamburger|RandomBook">
+          Random Book
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/advancedsearch" data-ol-link-track="Hamburger|AdvancedSearch">
+          Advanced Search
+        </a>
+        </li>
+        <li class="subsection">
+          Contribute
+        </li>
+        <li>
+        <a href="https://openlibrary.org/books/add" data-ol-link-track="Hamburger|AddBook">
+          Add a Book
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/recentchanges" data-ol-link-track="Hamburger|RecentEdits">
+          Recent Community Edits
+        </a>
+        </li>
+        <li class="subsection">
+          Resources
+        </li>
+        <li>
+        <a href="https://openlibrary.org/help" data-ol-link-track="Hamburger|Help">
+          Help &amp; Support
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/developers" data-ol-link-track="Hamburger|DevelopersHelp">
+          Developer Center
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/librarians" data-ol-link-track="Hamburger|LibrariansHelp">
+          Librarians Portal
+        </a>
+        </li>
+      </ul>
+    </div>
+  </details>
+</div>
+
+
+</header>
+<header class="header-bar mobile">
+  <ul class="navigation-component mobile">
+    <li>
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="mybooks-component header-dropdown">
+  <a href="https://openlibrary.org/account/books" data-ol-link-track="MainNav|MyBooks">My Books</a>
+</div>
+</li>
+    <li>
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="browse-component header-dropdown">
+  <details>
+    <summary>
+      Browse
+      <span class="shift">Menu</span>
+      
+      <img class="down-arrow" aria-hidden="true" src="./Open Library Search API_files/down-arrow.png" alt="" role="presentation" width="7" height="4">
+    </summary>
+    <div class="browse-dropdown-component navigation-dropdown-component">
+      <ul class="dropdown-menu browse-dropdown-menu">
+        <li>
+        <a href="https://openlibrary.org/subjects" data-ol-link-track="MainNav|Subjects">
+          Subjects
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/trending" data-ol-link-track="MainNav|Trending">
+          Trending
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/explore" data-ol-link-track="MainNav|Explore">
+          Library Explorer
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/lists" data-ol-link-track="MainNav|Lists">
+          Lists
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/collections" data-ol-link-track="MainNav|Collections">
+          Collections
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/k-12" data-ol-link-track="MainNav|K12Library">
+          K-12 Student Library
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/booktalks" data-ol-link-track="MainNav|BookTalks">
+          Book Talks
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/random" data-ol-link-track="MainNav|RandomBook">
+          Random Book
+        </a>
+        </li>
+        <li>
+        <a href="https://openlibrary.org/advancedsearch" data-ol-link-track="MainNav|AdvancedSearch">
+          Advanced Search
+        </a>
+        </li>
+      </ul>
+    </div>
+  </details>
+</div>
+</li>
+  </ul>
+</header>
+
+  
+  <div id="test-body-mobile">
+    
+    <div class="flash-messages">
+    </div>
+    
+    
+    
+    
+
+
+
+
+
+
+
+
+<div id="contentHead">
+    
+
+<div id="editTools" class="edit">
+    <div id="editInfo">
+        <div class="brown smaller sansserif">Last edited by <a rel="nofollow" href="https://openlibrary.org/people/ScarTissue">Drini</a></div>
+        <div class="smallest gray sansserif">August 10, 2024 | <a href="https://openlibrary.org/dev/docs/api/search?m=history" rel="nofollow" title="View this template&#39;s edit history">History</a></div>
+    </div>
+    <div class="editButton">
+      <!-- FIXME: accesskey / keyboard shortcut needs i18n -->
+      <a class="cta-btn cta-btn--vanilla" href="https://openlibrary.org/dev/docs/api/search?m=edit" title="Edit this page" data-ol-link-track="CTAClick|Edit" accesskey="e" rel="nofollow">Edit</a>
+    </div>
+</div>
+
+    <h1>Open Library Search API</h1>
+</div>
+
+
+<div id="contentBody">
+
+    
+
+
+
+
+    
+<p>The Open Library Search API is one of the most convenient and complete ways to retrieve book data on Open Library. The API:
+</p>
+<ol>
+ <li>
+     Is able to return data for <strong>multiple</strong> books in a single request/response <br>
+ </li>
+ <li>
+     Returns both Work level information about the book (like author info, first publish year, etc), as well as Edition level information (like title, identifiers, covers, etc)<br>
+ </li>
+ <li>
+     Author IDs are returned which you can use to fetch the author's image, if available<br>
+ </li>
+ <li>
+     Options are available to return Book Availability along with the response.<br>
+ </li>
+ <li>
+     Powerful sorting options are available, such as star ratings, publication date, and number of editions.
+ </li>
+</ol>
+<h2>Examples</h2>
+<p>The URL format for API is simple. Take the search URL and add <code>.json</code> to the end. Eg:
+</p>
+<ul>
+ <li>
+     <a href="https://openlibrary.org/search.json?q=the+lord+of+the+rings" rel="nofollow">https://openlibrary.org/search.json?q=the+lord+of+the+rings</a><br>
+ </li>
+ <li>
+     <a href="https://openlibrary.org/search.json?title=the+lord+of+the+rings" rel="nofollow">https://openlibrary.org/search.json?title=the+lord+of+the+rings</a><br>
+ </li>
+ <li>
+     <a href="https://openlibrary.org/search.json?author=tolkien&amp;sort=new" rel="nofollow">https://openlibrary.org/search.json?author=tolkien&amp;sort=new</a><br>
+ </li>
+ <li>
+     <a href="https://openlibrary.org/search.json?q=the+lord+of+the+rings&amp;page=2" rel="nofollow">https://openlibrary.org/search.json?q=the+lord+of+the+rings&amp;page=2</a><br>
+ </li>
+ <li>
+     <a href="https://openlibrary.org/search/authors.json?q=twain" rel="nofollow">https://openlibrary.org/search/authors.json?q=twain</a>
+ </li>
+</ul>
+<h2>Using Thing IDs to get Images</h2>
+<p>You can use the <code>olid</code> (Open Library ID) for authors and books to fetch covers by olid, e.g.:<br>
+   <a href="https://covers.openlibrary.org/a/olid/OL23919A-M.jpg" rel="nofollow">https://covers.openlibrary.org/a/olid/OL23919A-M.jpg</a>
+</p>
+<h2>URL Parameters</h2>
+<table>
+    <thead>
+        <tr>
+            <th width="100"><b>Parameter</b></th>
+            <th><b>Description</b></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th><code>q<code></code></code></th>
+            <td>The solr query. See <a href="https://openlibrary.org/search/howto">Search HowTo</a> for sample queries</td>
+        </tr>
+        <tr>
+            <th><code>fields</code></th>
+            <td>
+The fields to get back from solr. Use the special value <code>*</code> to get all fields (although be prepared for a very large response!).
+             <br>
+            To fetch availability data from archive.org, add the special value, <code>availability</code>. Example: <a href="https://openlibrary.org/search.json?q=harry%20potter&amp;fields=*,availability&amp;limit=1">/search.json?q=harry%20potter&amp;fields=*,availability&amp;limit=1</a>. This will fetch the availability data of the first item in the `ia` field.
+        </td></tr>
+        <tr>
+            <th><code>sort<code></code></code></th>
+            <td>You can sort the results by various facets such as <code>new</code>, <code>old</code>, <code>random</code>, or <code>key</code> (which sorts as a string, not as the number stored in the string). For a complete list of sorts facets look <a href="https://github.com/internetarchive/openlibrary/blob/b4afa14b0981ae1785c26c71908af99b879fa975/openlibrary/plugins/worksearch/schemes/works.py#L119-L153" rel="nofollow">here</a> (this link goes to a specific commit, be sure to look at the latest one for changes). The default is to sort by relevance.
+        </td></tr>
+        <tr>
+            <th><code>lang<code></code></code></th>
+            <td>The users language as a two letter (ISO 639-1) language code. This influences but doesn't exclude search results. For example setting this to <code>fr</code> will prefer/display the French edition of a given work, but will still match works that don't have French editions. Adding <code>language:fre</code> on the other hand to the search query <i>will</i> exclude results that don't have a French edition.
+        </td></tr>
+        <tr>
+            <th><code>offset</code> / <code>limit<code></code></code></th>
+            <td>Use for pagination.</td>
+        </tr>
+        <tr>
+            <th><code>page</code> / <code>limit<code></code></code></th>
+            <td>Use for pagination, with <code>limit</code> corresponding to the page size. Note <code>page</code> starts at 1.</td>
+        </tr>
+</tbody></table>
+<h2>Response Format</h2>
+<p>The response with be of the following format.
+</p>
+<pre><code>{
+    "start": 0,
+    "num_found": 629,
+    "docs": [
+        {...},
+        {...},
+        ...
+        {...}]
+}
+</code></pre><p>Each document specified listed in "docs" will be of the following format:
+</p>
+<pre><code>{
+    "cover_i": 258027,
+    "has_fulltext": true,
+    "edition_count": 120,
+    "title": "The Lord of the Rings",
+    "author_name": [
+        "J. R. R. Tolkien"
+    ],
+    "first_publish_year": 1954,
+    "key": "OL27448W",
+    "ia": [
+        "returnofking00tolk_1",
+        "lordofrings00tolk_1",
+        "lordofrings00tolk_0",
+    ],
+    "author_key": [
+        "OL26320A"
+    ],
+    "public_scan_b": true
+}
+</code></pre><p>The fields in the doc are described by Solr schema which can be found here:<br>
+   <a href="https://github.com/internetarchive/openlibrary/blob/b4afa14b0981ae1785c26c71908af99b879fa975/openlibrary/plugins/worksearch/schemes/works.py#L38-L91" rel="nofollow">https://github.com/internetarchive/openlibrary/blob/b4afa14b0981ae1785c26c71908af99b879fa975/openlibrary/plugins/worksearch/schemes/works.py#L38-L91</a>
+</p>
+<p>The schema is not guaranteed to be stable, but most common fields (e.g. title, IA ids, etc) should be safe to depend on.
+</p>
+<h2>Getting edition information</h2>
+<p>By default, the search endpoint returns <em>works</em> instead of <em>editions</em>. A <strong>work</strong> is a collection of editions; for example there is only one work for <a href="https://openlibrary.org/books/OL7170815M/The_Wonderful_Wizard_of_Oz" rel="nofollow"><em>The Wonderful Wizard of Oz</em> (OL18417W)</a>, but there are 1029 editions, over many languages! Sometimes you might want to fetch data about editions as well as works. That is what the <code>editions</code> field is for:
+</p>
+<p><a href="https://openlibrary.org/search.json?q=crime+and+punishment&amp;fields=key,title,author_name,editions" rel="nofollow">https://openlibrary.org/search.json?q=crime+and+punishment&amp;fields=key,title,author_name,editions</a>
+</p>
+<pre><code>{
+    "numFound": 2421,
+    "start": 0,
+    "numFoundExact": true,
+    "docs": [
+        {
+            "key": "/works/OL166894W",
+            "title": "Преступление и наказание",
+            "author_name": ["Фёдор Михайлович Достоевский"],
+            "editions": {
+                "numFound": 290,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL37239326M",
+                        "title": "Crime and Punishment"
+                    }
+                ]
+            }
+        },
+    ...
+</code></pre><p>The <code>editions</code> sub-object contains the editions of this work that match the user's query (here, "crime and punishment"), sorted so the best (i.e. most relevant) is at the top. Matching editions are first selected by forwarding any search fields in the query that apply to editions (e.g. <code>publisher</code>, <code>language</code>, <code>ebook_access</code>, <code>has_fulltext</code>, etc). Any un-fielded search terms (e.g. "crime and punishment", above) are also applied, but are not require to all match.
+</p>
+<p>From these, relevance is further determined by boosting books that (1) match the user's language, (2) are readable, (3) have a cover.
+</p>
+<p>You can see this in action in the search UI as well. Consider the following searches:
+</p>
+<ul>
+ <li>
+     <a href="https://openlibrary.org/search?q=sherlock+holmes&amp;mode=everything" rel="nofollow">"sherlock holmes"</a> - The first work is OL262463W, with the edition displayed <a href="https://openlibrary.org/books/OL7058607M"><em>Memoirs of Sherlock Holmes</em> (OL7058607M)</a>. This edition was selected because it matched the user's query, and it matched the user's language (my language is English), and because it was readable.<br>
+ </li>
+ <li>
+     <a href="https://openlibrary.org/search?q=sherlock+holmes+language%3Afre&amp;mode=everything" rel="nofollow">"sherlock holmes language:fre"</a> - The same work is displayed as above, but now the displayed edition is <a href="https://openlibrary.org/books/OL8887270M"><em>Souvenirs sur Sherlock Holmes</em> (OL8887270M)</a>, selected because the user's query requires a book in French.<br>
+ </li>
+ <li>
+     <a href="https://openlibrary.org/search?q=sherlock+holmes&amp;mode=everything&amp;lang=fr" rel="nofollow">"sherlock holmes" for a French user</a> - By setting <code>lang=fr</code> in the URL, we can simulate the website as it would appear for a French user. This information is used to influence the results again, and the displayed edition is <a href="https://openlibrary.org/books/OL8887270M"><em>Souvenirs sur Sherlock Holmes</em> (OL8887270M)</a> since this matches the user's language.<br>
+ </li>
+ <li>
+     <a href="https://openlibrary.org/search?q=souvenirs+sur+sherlock+holmes&amp;mode=everything" rel="nofollow">"souvenirs sur sherlock holmes"</a> - Here as an English user, I search by the French title. So again I will see the same work as always, but the displayed edition will now also be  <a href="https://openlibrary.org/books/OL8887270M"><em>Souvenirs sur Sherlock Holmes</em> (OL8887270M)</a> since this best matches the user's query.
+ </li>
+</ul>
+<p>In the API, you can also fetch fields from editions separately from those on the work, like so:
+</p>
+<p><a href="https://openlibrary.org/search.json?q=crime+and+punishment&amp;fields=key,title,author_name,editions,editions.key,editions.title,editions.ebook_access,editions.language" rel="nofollow">https://openlibrary.org/search.json?q=crime+and+punishment&amp;fields=key,title,author_name,editions,editions.key,editions.title,editions.ebook_access,editions.language</a>
+</p>
+<pre><code>{
+    "numFound": 2421,
+    "start": 0,
+    "numFoundExact": true,
+    "docs": [
+        {
+            "key": "/works/OL166894W",
+            "title": "Преступление и наказание",
+            "author_name": ["Фёдор Михайлович Достоевский"],
+            "editions": {
+                "numFound": 290,
+                "start": 0,
+                "numFoundExact": true,
+                "docs": [
+                    {
+                        "key": "/books/OL37239326M",
+                        "title": "Crime and Punishment",
+                        "language": [
+                            "eng"
+                        ],
+                        "ebook_access": "public"
+                    }
+                ]
+            }
+        },
+    ...
+</code></pre><p>Notes:<br>
+   - Currently only one edition is displayed ; we are planning to add support for pagination so you can specify <code>editions.row</code> or <code>editions.start</code>.<br>
+   - You can add <code>&amp;editions.sort</code> to override the default relevance logic and instead sort by a specific field.<br>
+   - You can see the exact boosting logic in the code here: <a href="https://github.com/internetarchive/openlibrary/blob/dc49fddb78a3cb25138922790ddd6a5dd2b5741c/openlibrary/plugins/worksearch/schemes/works.py#L439-L448" rel="nofollow">https://github.com/internetarchive/openlibrary/blob/dc49fddb78a3cb25138922790ddd6a5dd2b5741c/openlibrary/plugins/worksearch/schemes/works.py#L439-L448</a>
+</p>
+
+
+    
+
+<div class="clearfix"></div>
+<div id="pageHistory">
+    <div class="head">
+        <h2 class="collapse inline">
+            History
+        </h2>
+        <ul class="pageHistory__list inline">
+        <li class="title inline">Created February 27, 2013</li>
+        
+        <li class="link inline"><a rel="nofollow" href="https://openlibrary.org/dev/docs/api/search?m=history">37 revisions</a></li>
+        </ul>
+    </div>
+
+    <table class="history">
+        <tbody>
+            <tr>            <td class="timestamp"><a rel="nofollow" href="https://openlibrary.org/dev/docs/api/search?v=37" title="View revision 37">August 10, 2024</a></td>
+            <td class="timestamp">
+                Edited by <a rel="nofollow" href="https://openlibrary.org/people/ScarTissue" class="truncate">Drini</a>
+            </td>
+            <td class="detail">
+
+Fix some formatting issues 
+</td>
+            
+</tr>
+            <tr>            <td class="timestamp"><a rel="nofollow" href="https://openlibrary.org/dev/docs/api/search?v=36" title="View revision 36">November 30, 2023</a></td>
+            <td class="timestamp">
+                Edited by <a rel="nofollow" href="https://openlibrary.org/people/ScarTissue" class="truncate">Drini</a>
+            </td>
+            <td class="detail">
+
+Update code links
+</td>
+            
+</tr>
+            <tr>            <td class="timestamp"><a rel="nofollow" href="https://openlibrary.org/dev/docs/api/search?v=35" title="View revision 35">November 30, 2023</a></td>
+            <td class="timestamp">
+                Edited by <a rel="nofollow" href="https://openlibrary.org/people/ScarTissue" class="truncate">Drini</a>
+            </td>
+            <td class="detail">
+
+Fix html
+</td>
+            
+</tr>
+            <tr>            <td class="timestamp"><a rel="nofollow" href="https://openlibrary.org/dev/docs/api/search?v=34" title="View revision 34">November 30, 2023</a></td>
+            <td class="timestamp">
+                Edited by <a rel="nofollow" href="https://openlibrary.org/people/ScarTissue" class="truncate">Drini</a>
+            </td>
+            <td class="detail">
+
+Add more parameters to url params table
+</td>
+            
+</tr>
+            <tr>            <td class="timestamp"><a rel="nofollow" href="https://openlibrary.org/dev/docs/api/search?v=1" title="View revision 1">February 27, 2013</a></td>
+            <td class="timestamp">
+                Created by <a rel="nofollow" href="https://openlibrary.org/people/anand" class="truncate">Anand Chitipothu</a>
+            </td>
+            <td class="detail">
+
+documented search API.
+</td>
+            
+</tr>
+        </tbody>
+    </table>
+</div>
+
+
+</div>
+
+
+  </div>
+
+
+
+
+<!--For analytics-->
+<div class="clearfix"></div>
+
+
+<footer>
+  <div id="footer-content">
+    <div id="footer-links">
+      <div>
+        <h2>Open Library</h2>
+        <ul>
+          <li><a href="https://openlibrary.org/about/vision">Vision</a></li>
+          <li><a href="https://openlibrary.org/volunteer">Volunteer</a></li>
+          <li><a href="https://openlibrary.org/partner-with-us">Partner With Us</a></li>
+          <li><a href="https://archive.org/about/jobs.php" title="Jobs">Careers</a></li>
+          <li><a href="https://blog.openlibrary.org/">Blog</a></li>
+          <li><a href="https://archive.org/about/terms.php">Terms of Service</a></li>
+          <li><a href="https://archive.org/donate/?platform=ol&amp;origin=olwww-TopNavDonateButton">Donate</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Discover</h2>
+        <ul>
+          <li><a href="https://openlibrary.org/" title="Go home">Home</a></li>
+          <li><a href="https://openlibrary.org/search" title="Explore Books">Books</a></li>
+          <li><a href="https://openlibrary.org/search/authors" title="Explore authors">Authors</a></li>
+          <li><a href="https://openlibrary.org/subjects" title="Explore subjects">Subjects</a></li>
+          <li><a href="https://openlibrary.org/collections" title="Explore collections">Collections</a></li>
+          <li><a href="https://openlibrary.org/advancedsearch" title="Advanced Search">Advanced Search</a></li>
+          <li><a href="https://openlibrary.org/dev/docs/api/search#top" title="Navigate to top of this page">Return to Top</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Develop</h2>
+        <ul>
+          <li><a href="https://openlibrary.org/developers" title="Explore Open Library Developer Center">Developer Center</a></li>
+          <li><a href="https://openlibrary.org/developers/api" title="Explore Open Library APIs">API Documentation</a></li>
+          <li><a href="https://openlibrary.org/developers/dumps" title="Bulk Open Library data">Bulk Data Dumps</a></li>
+          <li><a href="https://github.com/internetarchive/openlibrary/wiki/Writing-Bots" title="Write a bot">Writing Bots</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Help</h2>
+        <ul>
+          <li><a href="https://openlibrary.org/help">Help Center</a></li>
+          <li><a href="https://openlibrary.org/contact?path=%2Fdev%2Fdocs%2Fapi%2Fsearch" title="Problems">Report A Problem</a></li>
+          <li><a href="https://openlibrary.org/help/faq/editing" title="Suggest Edits">Suggesting Edits</a></li>
+          <li><a href="https://openlibrary.org/books/add" title="Add a new book to Open Library">Add a Book</a></li>
+          <li><a href="https://github.com/internetarchive/openlibrary/releases" title="Release Notes">Release Notes</a></li>
+        </ul>
+        <aside>
+          <a class="footer-icon" title="Twitter" href="https://twitter.com/OpenLibrary"><img src="./Open Library Search API_files/tweet.svg" alt="" loading="lazy"></a>
+          <a class="footer-icon" title="GitHub" href="https://github.com/internetarchive/openlibrary"><img src="./Open Library Search API_files/github.svg" alt="" loading="lazy"></a>
+        </aside>
+      </div>
+      <div>
+        <h2>Change Website Language</h2>
+        
+<ul class="locale-options ">
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="cs" data-lang-id="cs" title="Czech">Čeština (cs)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="de" data-lang-id="de" title="German">Deutsch (de)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="en" data-lang-id="en" title="English">English (en)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="es" data-lang-id="es" title="Spanish">Español (es)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="fr" data-lang-id="fr" title="French">Français (fr)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="hr" data-lang-id="hr" title="Croatian">Hrvatski (hr)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="it" data-lang-id="it" title="Italian">Italiano (it)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="pt" data-lang-id="pt" title="Portuguese">Português (pt)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="hi" data-lang-id="hi" title="Hindi">हिंदी (hi)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="sc" data-lang-id="sc" title="Sardinian">Sardu (sc)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="te" data-lang-id="te" title="Telugu">తెలుగు (te)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="uk" data-lang-id="uk" title="Ukrainian">Українська (uk)</a></li> 
+  <li><a href="https://openlibrary.org/dev/docs/api/search#" lang="zh" data-lang-id="zh" title="Chinese">中文 (zh)</a></li> 
+</ul>
+
+      </div>
+    </div>
+    <hr>
+    <div id="footer-details">
+      <img id="archive-logo" src="./Open Library Search API_files/pantheon.png" alt="Open Library logo" loading="lazy">
+      <div id="legal-details">
+        <span>Open Library is an initiative of the <a href="https://archive.org/">Internet Archive</a>, a 501(c)(3) non-profit, building a digital library of Internet sites and other cultural artifacts in  digital form. Other <a href="https://archive.org/projects/">projects</a> include the <a href="https://archive.org/web/">Wayback Machine</a>, <a href="https://archive.org/">archive.org</a> and <a href="https://archive-it.org/">archive-it.org</a></span>
+      </div>
+      <div id="version-details">
+        <span class="version">version <a href="https://github.com/internetarchive/openlibrary/commit/425184f">425184f</a></span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<script src="./Open Library Search API_files/analytics.js" type="text/javascript"></script>
+<script src="./Open Library Search API_files/all.js" type="text/javascript"></script>
+<!-- Passes total_time for analytics to ol.analytics.js -->
+<div class="analytics-stats-time-calculator" data-time="606.3277721405029"></div>
+
+
+
+</body><grammarly-desktop-integration data-grammarly-shadow-root="true"><template shadowrootmode="open"><style>
+      div.grammarly-desktop-integration {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select:none;
+        user-select:none;
+      }
+
+      div.grammarly-desktop-integration:before {
+        content: attr(data-content);
+      }
+    </style><div aria-label="grammarly-integration" role="group" tabindex="-1" class="grammarly-desktop-integration" data-content="{&quot;mode&quot;:&quot;full&quot;,&quot;isActive&quot;:true,&quot;isUserDisabled&quot;:false}"></div></template></grammarly-desktop-integration></html>
