@@ -15,3 +15,26 @@ def fetch_author_data(start, max_items=25):
     else:
         print(f"Error: {response.status_code}, {response.text}")
         return None
+def setup_database():
+    conn = sqlite3.connect('final_project.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS Authors (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            authorid INTEGER UNIQUE,
+            authordisplay TEXT,
+            authorfirst TEXT,
+            authorlast TEXT
+        )
+    ''')
+    cursor.execute('''
+       CREATE TABLE IF NOT EXISTS Books (
+            id INTEGER PRIMARY KEY AUTHOINCREMENT,
+            authorid INTEGER,
+            title TEXT
+            onsaledate TEXT,
+            FOREIGN KEY(authorid) REFERENCES Authors(authorid)
+        )
+    ''')
+    conn.commit()
+    conn.close()
