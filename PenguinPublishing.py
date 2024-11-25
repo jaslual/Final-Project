@@ -51,7 +51,7 @@ def setup_database():
         )
     ''')
     cursor.execute('''
-       CREATE TABLE IF NOT EXISTS Books (
+       CREATE TABLE IF NOT EXISTS Titles (
             id INTEGER PRIMARY KEY,
             authorid INTEGER,
             title TEXT,
