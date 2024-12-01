@@ -31,7 +31,6 @@ def fetch_title_data(authorid):
         return [
             {
                 'title': title.get('title'),
-                'onsaledate': title.get('onsaledate')
             }
             for title in response.json().get('title', [])
         ]
@@ -46,6 +45,24 @@ def get_next_start_index():
     count = cursor.fetchone()[0]
     conn.close()
     return count
+
+def store_data_to_db(authors):
+    conn = sqlite3.connect('final_project.db')
+    cursor = conn.cursor()
+    for author in authors:
+        try:
+            cursor.execute(f'''
+                INSERT OR IGNORE INTO Authors (authorid, authordisplay, authorfirst, authorlast)
+                VALUES ({author.get('authorid')}, '{author.get('authordisplay')}',
+                        '{author.get('authorfirst')}', '{author.get('authorlast')}')
+            ''')
+            for book in author.get('books', []):
+                cursor.execute(f'''
+                    INSERT OR IGNORE INTO Titles (authorid, title)
+                    VALUES ({author.get('authorid')}, '{book.get('title')}')
+                ''')
+        except sqlite3.IntegrityError as e:
+            print(f'Error inserting data: {e}')
 
 def setup_database():
     conn = sqlite3.connect('final_project.db')
@@ -63,7 +80,6 @@ def setup_database():
             id INTEGER PRIMARY KEY,
             authorid INTEGER,
             title TEXT,
-            onsaledate TEXT,
             UNIQUE (authorid, title),
             FOREIGN KEY(authorid) REFERENCES Authors(authorid)
         )
