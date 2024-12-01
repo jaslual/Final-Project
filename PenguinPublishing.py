@@ -38,7 +38,15 @@ def fetch_title_data(authorid):
     else:
         print(f"Error fetching title for author {authorid}: {response.status_code}, {response.text}")
         return []
-    
+
+def get_next_start_index():
+    conn = sqlite3.connect('final_project.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM Authors")
+    count = cursor.fetchone()[0]
+    conn.close()
+    return count
+
 def setup_database():
     conn = sqlite3.connect('final_project.db')
     cursor = conn.cursor()
