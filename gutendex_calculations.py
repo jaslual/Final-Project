@@ -1,6 +1,6 @@
 import sqlite3
 
-def calculate_total_downloads():
+def calculate_top_author_downloads():
     conn = sqlite3.connect('final_project.db')
     cursor = conn.cursor()
 
@@ -9,7 +9,8 @@ def calculate_total_downloads():
     FROM Authors
     JOIN Titles ON Authors.id = Titles.author_id
     GROUP BY Authors.name
-    ORDER BY total_author_downloads DESC;
+    ORDER BY total_author_downloads DESC
+    LIMIT 10;
     '''
 
     cursor.execute(query)
@@ -25,7 +26,7 @@ def write_to_file(results, filename='total_author_downloads.txt'):
             file.write(f"{author:<40} {downloads:>10}\n")
 
 def main():
-    results = calculate_total_downloads()
+    results = calculate_top_author_downloads()
     write_to_file(results)
 
 if __name__ == '__main__':
