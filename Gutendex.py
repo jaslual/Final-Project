@@ -10,7 +10,7 @@ def create_tables():
     CREATE TABLE IF NOT EXISTS Authors (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT UNIQUE
-    )
+    );
     ''')
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS Titles (
@@ -18,9 +18,15 @@ def create_tables():
         title TEXT UNIQUE,
         author_id INTEGER,
         FOREIGN KEY (author_id) REFERENCES Authors (id)
-    ) 
+    );
     ''')
-    cursor.execute("INSERT OR IGNORE INTO Metadata (key, value) VALUES ('next_url', ?)", (API_URL))
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS Metadata (
+        key TEXT PRIMARY KEY,
+        value TEXT
+    );
+    ''')
+    cursor.execute("INSERT OR IGNORE INTO Metadata (key, value) VALUES ('next_url', ?)", (API_URL,))
     conn.commit()
     conn.close()
                    
@@ -30,7 +36,7 @@ def get_next_url():
     cursor.execute("SELECT value FROM Metadata WHERE key = 'next_url'")
     next_url = cursor.fetchone()[0]
     conn.close()
-    return next_url
+    return next_url[0] if next_url else API_URL
 
 def update_next_url(next_url):
     conn = sqlite3.connect('final_project.db')
@@ -59,7 +65,7 @@ def store_authors(books):
             if book['authors']:
                 author = book['authors'][0]
                 cursor.execute("INSERT OR IGNORE INTO Authors (name) VALUES (?)", (author['name'],))
-                cursor.execture("SELECT id FROM Authors WHERE name = ?", (author['name'],))
+                cursor.execute("SELECT id FROM Authors WHERE name = ?", (author['name'],))
                 author_id = cursor.fetchone()[0]
             else:
                 author_id = None
@@ -68,8 +74,8 @@ def store_authors(books):
                 id, title, author_id, download_count
             ) VALUES (?, ?, ?, ?)
             ''', (
-                book['id']
-                book['title']
+                book['id'],
+                book['title'],
                 author_id,
                 book.get('download_count', 0)
             ))
