@@ -17,6 +17,7 @@ def create_tables():
         id INTEGER PRIMARY KEY,
         title TEXT UNIQUE,
         author_id INTEGER,
+        download_count INTEGER,
         FOREIGN KEY (author_id) REFERENCES Authors (id)
     );
     ''')
@@ -36,7 +37,7 @@ def get_next_url():
     cursor.execute("SELECT value FROM Metadata WHERE key = 'next_url'")
     next_url = cursor.fetchone()[0]
     conn.close()
-    return next_url[0] if next_url else API_URL
+    return next_url
 
 def update_next_url(next_url):
     conn = sqlite3.connect('final_project.db')
@@ -62,6 +63,8 @@ def store_authors(books):
     cursor = conn.cursor()
     for book in books:
         try:
+            if not book['authors']:
+                continue
             if book['authors']:
                 author = book['authors'][0]
                 cursor.execute("INSERT OR IGNORE INTO Authors (name) VALUES (?)", (author['name'],))
