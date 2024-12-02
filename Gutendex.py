@@ -79,3 +79,12 @@ def store_authors(books):
     conn.close()
     print(f'Stored {len(books)} titles.')
 
+def main():
+    create_tables()
+    next_url = get_next_url()
+    books, new_next_url = fetch_books(next_url)
+    store_authors(books)
+    update_next_url(new_next_url)
+
+if __name__ == '__main__':
+    main()
