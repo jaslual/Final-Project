@@ -50,3 +50,32 @@ def fetch_books(url):
     except requests.RequestException as e:
         print(f"Error fetching data: {e}")
         return [], None
+    
+def store_authors(books):
+    conn = sqlite3.connect('final_project.db')
+    cursor = conn.cursor()
+    for book in books:
+        try:
+            if book['authors']:
+                author = book['authors'][0]
+                cursor.execute("INSERT OR IGNORE INTO Authors (name) VALUES (?)", (author['name'],))
+                cursor.execture("SELECT id FROM Authors WHERE name = ?", (author['name'],))
+                author_id = cursor.fetchone()[0]
+            else:
+                author_id = None
+            cursor.execute('''
+            INSERT OR IGNORE INTO Titles (
+                id, title, author_id, download_count
+            ) VALUES (?, ?, ?, ?)
+            ''', (
+                book['id']
+                book['title']
+                author_id,
+                book.get('download_count', 0)
+            ))
+        except sqlite3.DatabaseError as e:
+            print(f'Error storing title data: {e}')
+    conn.commit()
+    conn.close()
+    print(f'Stored {len(books)} titles.')
+
