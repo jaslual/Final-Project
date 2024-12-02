@@ -24,7 +24,20 @@ def create_tables():
     conn.commit()
     conn.close()
                    
+def get_next_url():
+    conn = sqlite3.connect('final_project.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT value FROM Metadata WHERE key = 'next_url'")
+    next_url = cursor.fetchone()[0]
+    conn.close()
+    return next_url
 
+def update_next_url(next_url):
+    conn = sqlite3.connect('final_project.db')
+    cursor = conn.cursor()
+    cursor.execute("UPDATE Metadata SET value = ? WHERE key = 'next_url'", (next_url,))
+    conn.commit()
+    conn.close()
     
 def fetch_title_data(authorid):
     params = {
