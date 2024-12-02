@@ -1,34 +1,29 @@
 import sqlite3
 import requests
 
+API_URL = 'https://gutendex.com/books'
 
-def get_api_key():
-    with open('api_key.txt', 'r') as file:
-        return file.read().strip()
-    
-API_KEY = get_api_key()
-BASE_URL = 'https://reststop.randomhouse.com/resources'
-def fetch_author_data(start, max_items=25):
-    params = {
-        'start': start,
-        'max': max_items,
-        'expandLevel': 1,
-        'api_key': API_KEY
-    }
-    headers = {'Accept': 'application/json'}
-    response = requests.get(f'{BASE_URL}/authors', params=params, headers=headers)
-    if response.status_code == 200:
-        try:
-            authors = response.json().get('author', [])
-            for author in authors:
-                authorid = author.get('authorid')
-                author['books'] = fetch_title_data(authorid)
-            return authors
-        except requests.exceptions.JSONDecodeError as e:
-            print(f'JSON decoding error: {e}')
-    else:
-        print(f"Error: {response.status_code}, {response.text}")
-        return []
+def create_tables():
+    conn = sqlite3.connect('final_project.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS Authors (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT UNIQUE
+    )
+    ''')
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS Titles (
+        id INTEGER PRIMARY KEY,
+        title TEXT UNIQUE,
+        author_id INTEGER,
+        FOREIGN KEY (author_id) REFERENCES Authors (id)
+    ) 
+    ''')
+    cursor.execute("INSERT OR IGNORE INTO Metadata (key, value) VALUES ('next_url', ?)", (API_URL))
+    conn.commit()
+    conn.close()
+                   
 
     
 def fetch_title_data(authorid):
