@@ -1,0 +1,112 @@
+Author Name                              Total Book Downloads
+--------------------------------------------------------------
+Shelley, Mary Wollstonecraft                 155688
+Shakespeare, William                         139281
+Smollett, T. (Tobias)                         81835
+Dickens, Charles                              78664
+Melville, Herman                              74858
+Austen, Jane                                  69431
+Wilde, Oscar                                  68590
+Dostoyevsky, Fyodor                           63164
+Alcott, Louisa May                            59656
+Carroll, Lewis                                57165
+Hawthorne, Nathaniel                          54994
+Dumas, Alexandre                              53428
+Forster, E. M. (Edward Morgan)                51907
+Eliot, George                                 49190
+Lü, Kun                                       48479
+Ibsen, Henrik                                 47016
+Von Arnim, Elizabeth                          44077
+Montgomery, L. M. (Lucy Maud)                 43823
+Stevenson, Robert Louis                       40583
+Fielding, Henry                               40581
+Wagner, Richard                               39844
+Doyle, Arthur Conan                           39461
+Gaskell, Elizabeth Cleghorn                   39153
+Fitzgerald, F. Scott (Francis Scott)          39083
+Joyce, James                                  38190
+Nietzsche, Friedrich Wilhelm                  36318
+Homer                                         32387
+Rizal, José                                   28132
+Locke, John                                   26041
+Tolstoy, Leo, graf                            24369
+Irving, Washington                            23173
+Hobbes, Thomas                                23163
+Brontë, Charlotte                             22046
+Wells, H. G. (Herbert George)                 19885
+Machiavelli, Niccolò                          18785
+Du Bois, W. E. B. (William Edward Burghardt)      17744
+Grimm, Jacob                                  17728
+Hugo, Victor                                  17049
+Jonson, Ben                                   16396
+Douglass, Frederick                           15419
+Augustine, Saint, Bishop of Hippo             15324
+Conrad, Joseph                                15290
+Twain, Mark                                   14519
+Brontë, Emily                                 14350
+Anonymous                                     12457
+Le Fanu, Joseph Sheridan                      12411
+Vatsyayana                                    12073
+Cervantes Saavedra, Miguel de                 11763
+Plato                                         11675
+Dante Alighieri                               11595
+Mill, John Stuart                             11519
+Thompson, Silvanus P. (Silvanus Phillips)      11314
+Marlowe, Christopher                          10755
+Voltaire                                      10102
+Salten, Felix                                 10092
+Aesop                                          9990
+Malory, Thomas, Sir                            9957
+Milne, A. A. (Alan Alexander)                  9884
+Figueiredo, Cândido de                         9797
+Glaspell, Susan                                9796
+Spenser, Edmund                                8956
+Gibran, Kahlil                                 8758
+Franklin, Benjamin                             8712
+Thucydides                                     8461
+Sophocles                                      8460
+Barrie, J. M. (James Matthew)                  8392
+Kant, Immanuel                                 8169
+Swift, Jonathan                                7987
+Platt, Rutherford Hayes                        7952
+Jacobs, Harriet A. (Harriet Ann)               7946
+Valmiki                                        7518
+Smith, Adam                                    7476
+Christie, Agatha                               7453
+Sunzi, active 6th century B.C.                 7437
+Nuttall, P. Austin                             7019
+Tocqueville, Alexis de                         6950
+Dexter, Timothy                                6917
+Darwin, Charles                                6893
+Defoe, Daniel                                  6839
+Pascal, Blaise                                 6788
+Polidori, John William                         6715
+Milton, John                                   6626
+Goethe, Johann Wolfgang von                    6619
+Strunk, William                                6382
+Montaigne, Michel de                           6372
+Hoffmann, Heinrich                             6353
+Apicius                                        6335
+Josephus, Flavius                              6234
+Burnett, Frances Hodgson                       6129
+Byron, George Gordon Byron, Baron              6078
+Stowe, Harriet Beecher                         5964
+Rand, Ayn                                      5757
+Cleland, John                                  5736
+Chopin, Kate                                   5714
+London, Jack                                   5700
+United States. Office of Strategic Services       5679
+Boccaccio, Giovanni                            5626
+James, Henry                                   5573
+Chaucer, Geoffrey                              5567
+Wharton, Edith                                 5540
+Hesse, Hermann                                 5522
+Hume, David                                    5502
+Verne, Jules                                   5500
+Lockwood, Ingersoll                            5448
+Kipling, Rudyard                               5254
+Ward, Grady                                    5218
+Herodotus                                      5218
+Vonnegut, Kurt                                 5194
+Hardy, Thomas                                  5194
+Synge, J. M. (John Millington)                 5167
