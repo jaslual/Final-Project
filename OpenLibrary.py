@@ -95,10 +95,10 @@ def visualize_data(data):
     plt.tight_layout()
     plt.savefig("authors.png")
 
-def get_books_from_database(genre):
+def get_books_from_database(genre1, genre2, genre3):
     conn = sqlite3.connect("final_project.db")
     cursor = conn.cursor()
-    cursor.execute("SELECT title, name FROM books JOIN authors ON books.author_id = authors.author_id WHERE genre = ?", (genre,))
+    cursor.execute("SELECT title, name FROM books JOIN authors ON books.author_id = authors.author_id WHERE genre = ?", (genre1, genre2, genre3,))
     results = cursor.fetchall()
     conn.close()
     return results
@@ -106,15 +106,21 @@ def get_books_from_database(genre):
 if __name__ == "__main__":
     setup_database()
     # clear_database()
-    genre = "romance"  # Set the genre to "romance" directly
-    fetch_and_store_books(genre)
+    genre1 = "romance"
+    genre2 = "fantasy"
+    genre3 = "young adult"
+    fetch_and_store_books(genre1)
+    fetch_and_store_books(genre2)
+    fetch_and_store_books(genre3)
 
-    stored_books = get_books_from_database(genre)
+    stored_books = get_books_from_database(genre1, genre2, genre3)
     if stored_books:
-        print(f"\nBooks in the genre '{genre}' from the database:")
+        print(f"\nBooks in the genre '{genre1}' from the database:")
+        print(f"\nBooks in the genre '{genre2}' from the database:")
+        print(f"\nBooks in the genre '{genre3}' from the database:")
         for i, (title, author) in enumerate(stored_books, 1):
             print(f"{i}. {title} by {author}")
     else:
         print(f"No books found in the database for genre '{genre}'.")
 
-# FOREIGN KEY (author_id) REFERENCES authors (author_id)
+# FOREIGN KEY (author_id) REFERENCES authors (author_id) 
