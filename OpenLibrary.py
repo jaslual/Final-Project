@@ -107,7 +107,7 @@ def get_books_from_database(genre):
 if __name__ == "__main__":
     setup_database()
     clear_database()
-    genre = input("Enter a book genre (e.g., fantasy, romance, history): ").lower()
+    genre = "romance"  # Set the genre to "romance" directly
     fetch_and_store_books(genre)
 
     stored_books = get_books_from_database(genre)
