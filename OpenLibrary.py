@@ -9,7 +9,8 @@
 
 import sqlite3
 import requests
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
+from bs4 import BeautifulSoup
 
 
 BASE_URL = "https://openlibrary.org/subjects/"
