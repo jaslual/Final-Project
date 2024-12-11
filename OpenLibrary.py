@@ -11,7 +11,7 @@ def setup_database():
     cursor = conn.cursor()
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS authors (
-        author_id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY,
         name TEXT NOT NULL
     )
     """)
@@ -20,7 +20,8 @@ def setup_database():
         book_id INTEGER PRIMARY KEY,
         title TEXT NOT NULL,
         author_id INTEGER,
-        genre TEXT NOT NULL
+        genre TEXT NOT NULL,
+        FOREIGN KEY (author_id) REFERENCES authors (id)
     )
     """)
     conn.commit()
@@ -72,7 +73,7 @@ def process_data():
     SELECT authors.name, COUNT(books.book_id) as book_count
     FROM books
     JOIN authors ON books.author_id = authors.author_id
-    GROUP BY authors.author_id
+    GROUP BY authors.id
     ORDER BY book_count DESC
     LIMIT 10
     """)
@@ -98,7 +99,7 @@ def visualize_data(data):
 def get_books_from_database(genre):
     conn = sqlite3.connect("final_project.db")
     cursor = conn.cursor()
-    cursor.execute("SELECT title, name FROM books JOIN authors ON books.author_id = authors.author_id WHERE genre = ?", (genre,))
+    cursor.execute("SELECT title, name FROM books JOIN authors ON books.author_id = authors.id WHERE genre = ?", (genre,))
     results = cursor.fetchall()
     conn.close()
     return results
