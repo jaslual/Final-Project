@@ -20,8 +20,7 @@ def setup_database():
         book_id INTEGER PRIMARY KEY,
         title TEXT NOT NULL,
         author_id INTEGER,
-        genre TEXT NOT NULL,
-        FOREIGN KEY (author_id) REFERENCES authors (author_id)
+        genre TEXT NOT NULL
     )
     """)
     conn.commit()
@@ -117,3 +116,5 @@ if __name__ == "__main__":
             print(f"{i}. {title} by {author}")
     else:
         print(f"No books found in the database for genre '{genre}'.")
+
+# FOREIGN KEY (author_id) REFERENCES authors (author_id)
