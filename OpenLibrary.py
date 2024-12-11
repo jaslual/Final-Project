@@ -34,8 +34,20 @@ def clear_database():
          conn.commit()
          conn.close()
 
+def get_last_offset():
+    try:
+        with open("last_offset.txt", "r") as file:
+            return int(file.read())
+    except FileNotFoundError:
+        return 0  # Default offset to 0 if no previous offset is found
+
+def set_last_offset(offset):
+    with open("last_offset.txt", "w") as file:
+        file.write(str(offset))
+
 def fetch_and_store_books(genre):
-    url = f"{BASE_URL}{genre}.json?limit=100"
+    offset = get_last_offset()
+    url = f"{BASE_URL}{genre}.json?limit=20&offset={offset}"  # Adjust offset dynamically
     response = requests.get(url)
     if response.status_code != 200:
         print("Failed to fetch data from Open Library.")
@@ -43,27 +55,36 @@ def fetch_and_store_books(genre):
     data = response.json()
     books = data.get("works", [])
 
+    if not books:
+        print("No more books to fetch.")
+        return
+
     conn = sqlite3.connect("final_project.db")
     cursor = conn.cursor()
 
     count = 0
     for book in books:
-        if count >= 100:
-            break
         title = book.get("title", "Unknown Title")
         author_name = book.get("authors", [{}])[0].get("name", "Unknown Author")
-        count += 1
+        # Check if book already exists to avoid duplication
+        cursor.execute("SELECT book_id FROM books WHERE title = ?", (title,))
+        if cursor.fetchone():
+            continue  # Skip if the book is already in the database
         try:
             cursor.execute("INSERT OR IGNORE INTO authors (name) VALUES (?)", (author_name,))
             author_id = cursor.lastrowid or cursor.execute("SELECT author_id FROM authors WHERE name = ?", (author_name,)).fetchone()[0]
             cursor.execute("REPLACE INTO books (title, author_id, genre) VALUES (?, ?, ?)", (title, author_id, genre))
             conn.commit()
+            count += 1
         except sqlite3.OperationalError as e:
             print(f"Error inserting data: {e}")
             continue  # Skip to the next book if there's an error
 
     conn.close()
     print(f"Stored {count} books in the '{genre}' genre into the database.")
+    
+    # Increment the offset by 25 for the next run
+    set_last_offset(offset + 20)
 
 def process_data():
     conn = sqlite3.connect("final_project.db")
@@ -116,5 +137,3 @@ if __name__ == "__main__":
             print(f"{i}. {title} by {author}")
     else:
         print(f"No books found in the database for genre '{genre}'.")
-
-# FOREIGN KEY (author_id) REFERENCES authors (author_id) 
