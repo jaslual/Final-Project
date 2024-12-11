@@ -26,13 +26,13 @@ def setup_database():
     conn.commit()
     conn.close()
 
-def clear_database():
-         conn = sqlite3.connect("final_project.db")
-         cursor = conn.cursor()
-         cursor.execute("DELETE FROM books")
-         cursor.execute("DELETE FROM authors")
-         conn.commit()
-         conn.close()
+# def clear_database():
+#          conn = sqlite3.connect("final_project.db")
+#          cursor = conn.cursor()
+#          cursor.execute("DELETE FROM books")
+#          cursor.execute("DELETE FROM authors")
+#          conn.commit()
+#          conn.close()
 
 def fetch_and_store_books(genre):
     url = f"{BASE_URL}{genre}.json"
@@ -105,7 +105,7 @@ def get_books_from_database(genre):
 
 if __name__ == "__main__":
     setup_database()
-    clear_database()
+    # clear_database()
     genre = "romance"  # Set the genre to "romance" directly
     fetch_and_store_books(genre)
 
