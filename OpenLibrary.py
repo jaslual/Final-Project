@@ -11,7 +11,7 @@ def setup_database():
     cursor = conn.cursor()
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS authors (
-        id INTEGER PRIMARY KEY,
+        author_id INTEGER PRIMARY KEY,
         name TEXT NOT NULL
     )
     """)
@@ -20,23 +20,22 @@ def setup_database():
         book_id INTEGER PRIMARY KEY,
         title TEXT NOT NULL,
         author_id INTEGER,
-        genre TEXT NOT NULL,
-        FOREIGN KEY (author_id) REFERENCES authors (id)
+        genre TEXT NOT NULL
     )
     """)
     conn.commit()
     conn.close()
 
-# def clear_database():
-#          conn = sqlite3.connect("final_project.db")
-#          cursor = conn.cursor()
-#          cursor.execute("DELETE FROM books")
-#          cursor.execute("DELETE FROM authors")
-#          conn.commit()
-#          conn.close()
+def clear_database():
+         conn = sqlite3.connect("final_project.db")
+         cursor = conn.cursor()
+         cursor.execute("DELETE FROM books")
+         cursor.execute("DELETE FROM authors")
+         conn.commit()
+         conn.close()
 
 def fetch_and_store_books(genre):
-    url = f"{BASE_URL}{genre}.json"
+    url = f"{BASE_URL}{genre}.json?limit=100"
     response = requests.get(url)
     if response.status_code != 200:
         print("Failed to fetch data from Open Library.")
@@ -49,7 +48,7 @@ def fetch_and_store_books(genre):
 
     count = 0
     for book in books:
-        if count >= 25:
+        if count >= 100:
             break
         title = book.get("title", "Unknown Title")
         author_name = book.get("authors", [{}])[0].get("name", "Unknown Author")
@@ -73,7 +72,7 @@ def process_data():
     SELECT authors.name, COUNT(books.book_id) as book_count
     FROM books
     JOIN authors ON books.author_id = authors.author_id
-    GROUP BY authors.id
+    GROUP BY authors.author_id
     ORDER BY book_count DESC
     LIMIT 10
     """)
@@ -96,7 +95,7 @@ def visualize_data(data):
     plt.tight_layout()
     plt.savefig("authors.png")
 
-def get_books_from_database(genre1, genre2, genre3):
+def get_books_from_database(genre):
     conn = sqlite3.connect("final_project.db")
     cursor = conn.cursor()
     cursor.execute("SELECT title, name FROM books JOIN authors ON books.author_id = authors.author_id WHERE genre = ?", (genre,))
@@ -106,19 +105,13 @@ def get_books_from_database(genre1, genre2, genre3):
 
 if __name__ == "__main__":
     setup_database()
-    # clear_database()
-    genre1 = "romance"
-    genre2 = "fantasy"
-    genre3 = "young adult"
-    fetch_and_store_books(genre1)
-    fetch_and_store_books(genre2)
-    fetch_and_store_books(genre3)
+    clear_database()
+    genre = "romance"
+    fetch_and_store_books(genre)
 
-    stored_books = get_books_from_database(genre1, genre2, genre3)
+    stored_books = get_books_from_database(genre)
     if stored_books:
-        print(f"\nBooks in the genre '{genre1}' from the database:")
-        print(f"\nBooks in the genre '{genre2}' from the database:")
-        print(f"\nBooks in the genre '{genre3}' from the database:")
+        print(f"\nBooks in the genre '{genre}' from the database:")
         for i, (title, author) in enumerate(stored_books, 1):
             print(f"{i}. {title} by {author}")
     else:
