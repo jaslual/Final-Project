@@ -86,35 +86,6 @@ def fetch_and_store_books(genre):
     # Increment the offset by 25 for the next run
     set_last_offset(offset + 20)
 
-def process_data():
-    conn = sqlite3.connect("final_project.db")
-    cursor = conn.cursor()
-    cursor.execute("""
-    SELECT authors.name, COUNT(books.book_id) as book_count
-    FROM books
-    JOIN authors ON books.author_id = authors.author_id
-    GROUP BY authors.author_id
-    ORDER BY book_count DESC
-    LIMIT 10
-    """)
-    results = cursor.fetchall()
-    conn.close()
-
-    with open("book_counts.txt", "w") as file:
-        for author, count, in results:
-            file.write(f"{author}: {count} books\n")
-    return results
-
-def visualize_data(data):
-    authors, counts = zip(*data)
-    plt.figure(figsize=(12, 6))
-    plt.bar(authors, counts)
-    plt.title("Authors by Number of Books")
-    plt.xlabel("Authors")
-    plt.ylabel("Number of Books")
-    plt.xticks(rotation=45, ha='right')
-    plt.tight_layout()
-    plt.savefig("authors.png")
 
 def get_books_from_database(genre):
     conn = sqlite3.connect("final_project.db")
