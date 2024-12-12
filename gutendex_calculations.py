@@ -4,6 +4,7 @@ def calculate_top_author_downloads():
     conn = sqlite3.connect('final_project.db')
     cursor = conn.cursor()
 
+    #calculates total downloads per author and gets top 10
     query = '''
     SELECT Authors.name, SUM(Titles.download_count) AS total_author_downloads
     FROM Authors
@@ -20,8 +21,8 @@ def calculate_top_author_downloads():
 
 def write_to_file(results, filename='total_author_downloads.txt'):
     with open(filename, 'w') as file:
-        file.write(f"{'Author Name':<40} {'Total Book Downloads':>10}\n")
-        file.write(f"{'-' * 62}\n")
+        file.write(f"{'Author Name':<40} {'Total Book Downloads':>10}\n") #write header row with 2 columns
+        file.write(f"{'-' * 62}\n") #separator line
         for author, downloads in results:
             file.write(f"{author:<40} {downloads:>10}\n")
 
