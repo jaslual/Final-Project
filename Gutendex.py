@@ -18,7 +18,7 @@ def create_tables():
         title TEXT UNIQUE,
         author_id INTEGER,
         download_count INTEGER,
-        FOREIGN KEY (author_id) REFERENCES Authors (id)
+        FOREIGN KEY (author_id) REFERENCES Authors2 (id)
     );
     ''')
     conn.commit()
